@@ -1,0 +1,77 @@
+﻿@{
+    ViewData["Title"] = "Bienvenidos a Inmobiliaria ULP";
+}
+
+<style>
+    body {
+
+
+        background: url('/img/imb2.jpg') no-repeat center center fixed;
+        background-size: cover;
+    }
+
+
+    .hero-section {
+        padding: 60px 0;
+    }
+
+    .hero-section h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        color: #2c3e50;
+    }
+
+    .hero-section p.lead {
+        font-size: 1.3rem;
+        color: #34495e;
+    }
+
+    .card {
+        transition: transform 0.3s ease-in-out;
+        border: none;
+        border-radius: 15px;
+    }
+
+    .card:hover {
+        transform: scale(1.03);
+    }
+
+    .card .btn {
+        border-radius: 50px;
+    }
+
+    .card-body i {
+        font-size: 3rem;
+    }
+</style>
+
+<div class="container hero-section text-center">
+    <h1 class="display-4">¡Bienvenidos a Inmobiliaria NET 🏡!</h1>
+    <p class="lead">Espacio digital para administrar propiedades, propietarios e inquilinos de manera rápida y segura.
+    </p>
+
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-5 mb-4">
+            <div class="card shadow-lg h-100">
+                <div class="card-body">
+                    <i class="bi bi-people-fill text-primary mb-3"></i>
+                    <h5 class="card-title">Propietarios</h5>
+                    <p class="card-text">Administrá la información de los propietarios fácilmente.</p>
+                    <a asp-controller="Propietarios" asp-action="Index" class="btn btn-outline-primary px-4">Ir a
+                        Propietarios</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5 mb-4">
+            <div class="card shadow-lg h-100">
+                <div class="card-body">
+                    <i class="bi bi-person-badge-fill text-success mb-3"></i>
+                    <h5 class="card-title">Inquilinos</h5>
+                    <p class="card-text">Gestioná inquilinos actuales y sus datos de contacto.</p>
+                    <a asp-controller="Inquilinos" asp-action="Index" class="btn btn-outline-success px-4">Ir a
+                        Inquilinos</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

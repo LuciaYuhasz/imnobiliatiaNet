@@ -1,0 +1,14 @@
+@model imnobiliatiaNet.Models.Inquilino
+
+@{
+    ViewData["Title"] = "Editar Inquilino";
+}
+
+<h1>Editar Inquilino</h1>
+
+<form asp-action="Editar" method="post">
+    <input type="hidden" asp-for="Id" />
+    @Html.Partial("_Form", Model)
+    <button type="submit" class="btn btn-primary">Guardar cambios</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>

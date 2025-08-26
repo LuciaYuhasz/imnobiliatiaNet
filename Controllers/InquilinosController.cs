@@ -1,0 +1,92 @@
+
+using imnobiliatiaNet.Models;
+using imnobiliatiaNet.Repositorios;
+
+using Microsoft.AspNetCore.Mvc;
+
+namespace inmobiliatiaNet.Controllers
+{
+    public class InquilinosController : Controller
+    {
+        private readonly IInquilinoRepositorio _repo;
+
+        public InquilinosController(IInquilinoRepositorio repo)
+        {
+            _repo = repo;
+        }
+
+        // GET: /Inquilinos
+        public async Task<IActionResult> Index(string? filtro)
+        {
+            Console.WriteLine($"Filtro recibido: {filtro}");
+            var lista = await _repo.ListarAsync(filtro);
+            return View(lista);
+        }
+
+        // GET: /Inquilinos/Crear
+        public IActionResult Crear()
+        {
+            return View();
+        }
+
+        // POST: /Inquilinos/Crear
+        [HttpPost]
+        public async Task<IActionResult> Crear(Inquilino inquilino)
+        {
+            if (ModelState.IsValid)
+            {
+                await _repo.CrearAsync(inquilino);
+                return RedirectToAction("Index");
+            }
+            return View(inquilino);
+        }
+
+        // GET: /Inquilinos/Editar/5
+        public async Task<IActionResult> Editar(int id)
+        {
+            var inquilino = await _repo.ObtenerPorIdAsync(id);
+            if (inquilino == null) return NotFound();
+            return View(inquilino);
+        }
+
+        // POST: /Inquilinos/Editar/5
+        [HttpPost]
+        public async Task<IActionResult> Editar(int id, Inquilino inquilino)
+        {
+            if (id != inquilino.Id) return BadRequest();
+            if (ModelState.IsValid)
+            {
+                var actualizado = await _repo.ActualizarAsync(inquilino);
+                if (!actualizado) return NotFound();
+                return RedirectToAction("Index");
+            }
+            return View(inquilino);
+        }
+
+        // GET: /Inquilinos/Detalles/5
+        public async Task<IActionResult> Detalle(int id)
+        {
+            var inquilino = await _repo.ObtenerPorIdAsync(id);
+            if (inquilino == null) return NotFound();
+            return View(inquilino);
+        }
+
+        // GET: /Inquilinos/Eliminar/5
+        public async Task<IActionResult> Eliminar(int id)
+        {
+            var inquilino = await _repo.ObtenerPorIdAsync(id);
+            if (inquilino == null) return NotFound();
+            return View(inquilino);
+        }
+
+        // POST: /Inquilinos/Eliminar/5
+        [HttpPost, ActionName("Eliminar")]
+        public async Task<IActionResult> EliminarConfirmado(int id)
+        {
+            var borrado = await _repo.BorrarAsync(id);
+            if (!borrado) return NotFound();
+            return RedirectToAction("Index");
+        }
+    }
+}
+

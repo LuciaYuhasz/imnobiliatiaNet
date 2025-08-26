@@ -1,0 +1,49 @@
+@model IEnumerable<imnobiliatiaNet.Models.Inquilino>
+
+@{
+    ViewData["Title"] = "Inquilinos";
+}
+
+<h1>Inquilinos</h1>
+
+<form method="get" class="mb-3">
+    <input name="filtro" class="form-control" placeholder="Buscar por DNI / Nombre / Apellido"
+        value="@Context.Request.Query["filtro"]" />
+
+</form>
+
+<p>
+    <a class="btn btn-primary" asp-action="Crear">Nuevo</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>DNI</th>
+            <th>Apellido</th>
+            <th>Nombre</th>
+            <th>Teléfono</th>
+            <th>Email</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var i in Model)
+        {
+            <tr>
+                <td>@i.DNI</td> <!-- Acordate que tu propiedad se llama "DNI" con mayúsculas -->
+                <td>@i.Apellido</td>
+                <td>@i.Nombre</td>
+                <td>@i.Telefono</td>
+                <td>@i.Email</td>
+                <td class="text-end">
+                    <a class="btn btn-sm btn-secondary" asp-action="Detalle" asp-route-id="@i.Id">Ver</a>
+                    <a class="btn btn-sm btn-warning" asp-action="Editar" asp-route-id="@i.Id">Editar</a>
+                    <form asp-action="Eliminar" asp-route-id="@i.Id" method="post" style="display:inline">
+                        <button class="btn btn-sm btn-danger" onclick="return confirm('¿Borrar?')">Borrar</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

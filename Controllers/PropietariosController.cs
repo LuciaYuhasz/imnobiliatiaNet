@@ -1,0 +1,63 @@
+using Microsoft.AspNetCore.Mvc;
+using imnobiliatiaNet.Models;
+
+using imnobiliatiaNet.Repositorios;
+
+
+namespace imnobiliatiaNet.Controllers
+{
+    public class PropietariosController : Controller
+    {
+        private readonly IPropietarioRepositorio _repo;
+        public PropietariosController(IPropietarioRepositorio repo) => _repo = repo;
+
+        public async Task<IActionResult> Index(string? q)
+        {
+            var lista = await _repo.ListarAsync(q);
+            return View(lista);
+        }
+
+        public IActionResult Crear() => View();
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Crear(Propietario p)
+        {
+            if (!ModelState.IsValid) return View(p);
+            var id = await _repo.CrearAsync(p);
+            return RedirectToAction(nameof(Editar), new { id });
+        }
+
+        public async Task<IActionResult> Editar(int id)
+        {
+            var p = await _repo.ObtenerPorIdAsync(id);
+            if (p == null) return NotFound();
+            return View(p);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Editar(Propietario p)
+        {
+            if (!ModelState.IsValid) return View(p);
+            var ok = await _repo.ActualizarAsync(p);
+            if (!ok) return NotFound();
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Borrar(int id)
+        {
+            await _repo.BorrarAsync(id);
+            return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> Detalle(int id)
+        {
+            var p = await _repo.ObtenerPorIdAsync(id);
+            if (p == null) return NotFound();
+            return View(p);
+        }
+    }
+}

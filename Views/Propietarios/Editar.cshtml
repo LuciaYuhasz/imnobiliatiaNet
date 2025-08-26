@@ -1,0 +1,12 @@
+@model imnobiliatiaNet.Models.Propietario
+@{
+    ViewData["Title"] = "Editar Propietario";
+}
+<h1>Editar Propietario</h1>
+
+<form asp-action="Editar" method="post">
+    <input type="hidden" asp-for="Id" />
+    <partial name="_Form" />
+    <button class="btn btn-primary">Guardar</button>
+    <a asp-action="Index" class="btn btn-link">Volver</a>
+</form>
