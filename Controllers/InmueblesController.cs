@@ -95,10 +95,33 @@ namespace imnobiliatiaNet.Controllers
             return View(i);
         }
 
-        public async Task<IActionResult> Eliminar(int id)
+        /*public async Task<IActionResult> Eliminar(int id)
         {
             await _repo.BajaAsync(id);
             return RedirectToAction(nameof(Index));
+        }*/
+        public async Task<IActionResult> Eliminar(int id)
+        {
+            try
+            {
+                var eliminado = await _repo.BajaAsync(id);
+                if (!eliminado)
+                    return NotFound();
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (MySqlConnector.MySqlException ex) when (ex.Number == 1451)
+            {
+                TempData["Error"] = "No se puede eliminar el inmueble porque está vinculado a uno o más contratos.";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception)
+            {
+                TempData["Error"] = "Ocurrió un error inesperado al intentar eliminar el inmueble.";
+                return RedirectToAction(nameof(Index));
+            }
         }
+
+
     }
 }

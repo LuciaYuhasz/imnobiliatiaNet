@@ -44,7 +44,7 @@
 
 
 
-# inmobiliatiaNet: Primer entrega
+# inmobiliatiaNet: Segunda entrega
 
 ## Funcionalidades incluidas:
 CRUD de Inmuebles

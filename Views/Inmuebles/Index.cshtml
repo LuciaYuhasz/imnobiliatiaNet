@@ -2,6 +2,13 @@
 @{
     ViewData["Title"] = "Inmuebles";
 }
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger text-center fw-semibold">
+        @TempData["Error"]
+    </div>
+}
+
 
 <h1>Inmuebles</h1>
 
@@ -36,7 +43,13 @@
                 <td class="text-end">
                     <a class="btn btn-sm btn-secondary" asp-action="Detalle" asp-route-id="@i.Id">Ver</a>
                     <a class="btn btn-sm btn-warning" asp-action="Editar" asp-route-id="@i.Id">Editar</a>
-                    <a class="btn btn-sm btn-danger" asp-action="Eliminar" asp-route-id="@i.Id">Eliminar</a>
+                    <form asp-action="Eliminar" asp-route-id="@i.Id" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-danger"
+                            onclick="return confirm('¿Seguro que querés eliminar este inmueble?')">
+                            Eliminar
+                        </button>
+                    </form>
+
                 </td>
             </tr>
         }

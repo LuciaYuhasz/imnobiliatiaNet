@@ -78,15 +78,37 @@ namespace inmobiliatiaNet.Controllers
             if (inquilino == null) return NotFound();
             return View(inquilino);
         }
+        [HttpPost, ActionName("Eliminar")]
+        public async Task<IActionResult> EliminarConfirmado(int id)
+        {
+            try
+            {
+                var borrado = await _repo.BorrarAsync(id);
+                if (!borrado)
+                    return NotFound();
 
-        // POST: /Inquilinos/Eliminar/5
+                return RedirectToAction("Index");
+            }
+            catch (MySqlConnector.MySqlException ex) when (ex.Number == 1451)
+            {
+                TempData["Error"] = "No se puede eliminar el inquilino porque tiene contratos asociados.";
+                return RedirectToAction("Index");
+            }
+            catch (Exception)
+            {
+                TempData["Error"] = "Ocurrió un error inesperado al intentar eliminar el inquilino.";
+                return RedirectToAction("Index");
+            }
+        }
+
+        /*// POST: /Inquilinos/Eliminar/5
         [HttpPost, ActionName("Eliminar")]
         public async Task<IActionResult> EliminarConfirmado(int id)
         {
             var borrado = await _repo.BorrarAsync(id);
             if (!borrado) return NotFound();
             return RedirectToAction("Index");
-        }
+        }*/
     }
 }
 

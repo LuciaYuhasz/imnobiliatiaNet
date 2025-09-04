@@ -3,6 +3,12 @@
 @{
     ViewData["Title"] = "Propietarios";
 }
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger text-center fw-semibold">
+        @TempData["Error"]
+    </div>
+}
 
 <h1 class="mb-4">Propietarios</h1>
 

@@ -45,12 +45,35 @@ namespace imnobiliatiaNet.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        [HttpPost]
+        /*[HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Borrar(int id)
         {
             await _repo.BorrarAsync(id);
             return RedirectToAction(nameof(Index));
+        }*/
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Borrar(int id)
+        {
+            try
+            {
+                var borrado = await _repo.BorrarAsync(id);
+                if (!borrado)
+                    return NotFound();
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (MySqlConnector.MySqlException ex) when (ex.Number == 1451)
+            {
+                TempData["Error"] = "No se puede eliminar el propietario porque tiene inmuebles asociados.";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception)
+            {
+                TempData["Error"] = "Ocurrió un error inesperado al intentar eliminar el propietario.";
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         public async Task<IActionResult> Detalle(int id)

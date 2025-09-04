@@ -2,6 +2,7 @@ using imnobiliatiaNet.Models;
 using imnobiliatiaNet.Repositorios;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using MySqlConnector;
 
 namespace imnobiliatiaNet.Controllers
 {
@@ -98,18 +99,42 @@ namespace imnobiliatiaNet.Controllers
 
             return View(contrato);
         }
-
-        // POST: Contratos/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var eliminado = await _contratoRepo.BajaAsync(id);
-            if (!eliminado)
-                return NotFound();
+            try
+            {
+                var eliminado = await _contratoRepo.BajaAsync(id);
+                if (!eliminado)
+                    return NotFound();
 
-            return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index));
+            }
+            catch (MySqlException ex) when (ex.Number == 1451) // Error de clave foránea
+            {
+                TempData["Error"] = "No se puede eliminar el contrato porque tiene pagos asociados.";
+                return RedirectToAction("Delete", new { id });
+            }
+            catch (Exception)
+            {
+                TempData["Error"] = "Ocurrió un error inesperado al intentar eliminar el contrato.";
+                return RedirectToAction("Delete", new { id });
+            }
         }
+
+        /*
+                        // POST: Contratos/Delete/5
+                        [HttpPost, ActionName("Delete")]
+                        [ValidateAntiForgeryToken]
+                        public async Task<IActionResult> DeleteConfirmed(int id)
+                        {
+                            var eliminado = await _contratoRepo.BajaAsync(id);
+                            if (!eliminado)
+                                return NotFound();
+
+                            return RedirectToAction(nameof(Index));
+                        }*/
 
         // ✅ Método auxiliar para cargar listas de inmuebles e inquilinos
         private async Task CargarListasAsync()

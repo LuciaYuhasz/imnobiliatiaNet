@@ -3,6 +3,13 @@
 @{
     ViewData["Title"] = "Eliminar Contrato";
 }
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger text-center fw-semibold">
+        @TempData["Error"]
+    </div>
+}
+
 
 <div class="container d-flex justify-content-center mt-5">
     <div class="col-md-8">
