@@ -1,0 +1,38 @@
+@model imnobiliatiaNet.Models.Contrato
+
+@{
+    ViewData["Title"] = "Detalle del Contrato";
+}
+
+<div class="container d-flex justify-content-center mt-5">
+    <div class="col-md-8">
+
+        <h1 class="text-center mb-5 display-4 fw-semibold text-shadow title-highlight">📄 Detalle del Contrato</h1>
+
+        <div class="card shadow-lg bg-glass">
+            <div class="card-body">
+                <dl class="row fs-5">
+                    <dt class="col-sm-4 fw-bold">📅 Fecha de Inicio</dt>
+                    <dd class="col-sm-8">@Model.FechaInicio.ToString("dd/MM/yyyy")</dd>
+
+                    <dt class="col-sm-4 fw-bold">📅 Fecha de Fin</dt>
+                    <dd class="col-sm-8">@Model.FechaFin.ToString("dd/MM/yyyy")</dd>
+
+                    <dt class="col-sm-4 fw-bold">💰 Monto</dt>
+                    <dd class="col-sm-8">@Model.Monto.ToString("C")</dd>
+
+                    <dt class="col-sm-4 fw-bold">🏠 Inmueble</dt>
+                    <dd class="col-sm-8">@Model.Inmueble?.Direccion - @Model.Inmueble?.Tipo</dd>
+
+                    <dt class="col-sm-4 fw-bold">🧑‍💼 Inquilino</dt>
+                    <dd class="col-sm-8">@Model.Inquilino?.Apellido @Model.Inquilino?.Nombre</dd>
+                </dl>
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <a class="btn btn-warning me-2 px-4 py-2" asp-action="Edit" asp-route-id="@Model.Id">✏️ Editar</a>
+            <a class="btn btn-secondary px-4 py-2" asp-action="Index">↩️ Volver</a>
+        </div>
+    </div>
+</div>

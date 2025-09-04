@@ -1,46 +1,63 @@
 @model IEnumerable<imnobiliatiaNet.Models.Propietario>
+
 @{
     ViewData["Title"] = "Propietarios";
 }
 
-<h1>Propietarios</h1>
+<h1 class="mb-4">Propietarios</h1>
 
-<form method="get" class="mb-3">
-    <input name="q" class="form-control" placeholder="Buscar por DNI / Nombre / Apellido" value="@Context.Request.Query["q"]" />
-</form>
+<div class="row mb-3">
+    <div class="col-md-8">
+        <form method="get" class="input-group">
+            <input name="q" class="form-control" placeholder="Buscar por DNI, Nombre o Apellido"
+                value="@Context.Request.Query["q"]" />
+            <button class="btn btn-outline-secondary" type="submit">
+                <i class="bi bi-search"></i> Buscar
+            </button>
+        </form>
+    </div>
+    <div class="col-md-4 text-end">
+        <a class="btn btn-primary" asp-action="Crear">
+            <i class="bi bi-person-plus"></i> Nuevo Propietario
+        </a>
+    </div>
+</div>
 
-<p>
-    <a class="btn btn-primary" asp-action="Crear">Nuevo</a>
-</p>
-
-<table class="table table-striped">
-    <thead>
+<table class="table table-hover align-middle">
+    <thead class="table-dark">
         <tr>
             <th>DNI</th>
             <th>Apellido</th>
             <th>Nombre</th>
             <th>Teléfono</th>
             <th>Email</th>
-            <th></th>
+            <th class="text-end">Acciones</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var p in Model)
-{
-        <tr>
-            <td>@p.Dni</td>
-            <td>@p.Apellido</td>
-            <td>@p.Nombre</td>
-            <td>@p.Telefono</td>
-            <td>@p.Email</td>
-            <td class="text-end">
-                <a class="btn btn-sm btn-secondary" asp-action="Detalle" asp-route-id="@p.Id">Ver</a>
-                <a class="btn btn-sm btn-warning" asp-action="Editar" asp-route-id="@p.Id">Editar</a>
-                <form asp-action="Borrar" asp-route-id="@p.Id" method="post" style="display:inline">
-                    <button class="btn btn-sm btn-danger" onclick="return confirm('¿Borrar?')">Borrar</button>
-                </form>
-            </td>
-        </tr>
-}
+        @foreach (var p in Model)
+        {
+            <tr>
+                <td>@p.Dni</td>
+                <td>@p.Apellido</td>
+                <td>@p.Nombre</td>
+                <td>@p.Telefono</td>
+                <td>@p.Email</td>
+                <td class="text-end">
+                    <a class="btn btn-sm btn-outline-secondary me-1" asp-action="Detalle" asp-route-id="@p.Id">
+                        <i class="bi bi-eye"></i> Ver
+                    </a>
+                    <a class="btn btn-sm btn-outline-warning me-1" asp-action="Editar" asp-route-id="@p.Id">
+                        <i class="bi bi-pencil"></i> Editar
+                    </a>
+                    <form asp-action="Borrar" asp-route-id="@p.Id" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-outline-danger"
+                            onclick="return confirm('¿Seguro que querés borrar este propietario?')">
+                            <i class="bi bi-trash"></i> Borrar
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

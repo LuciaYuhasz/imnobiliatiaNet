@@ -1,25 +1,37 @@
 @model imnobiliatiaNet.Models.Inquilino
 
 @{
-    ViewData["Title"] = "Detalles del Inquilino";
+    ViewData["Title"] = "Detalle del Inquilino";
 }
 
-<h1>Detalles del Inquilino</h1>
+<div class="container d-flex justify-content-center mt-5">
+    <div class="col-md-8">
 
-<div class="mb-3">
-    <strong>DNI:</strong> @Model.DNI
-</div>
-<div class="mb-3">
-    <strong>Apellido:</strong> @Model.Apellido
-</div>
-<div class="mb-3">
-    <strong>Nombre:</strong> @Model.Nombre
-</div>
-<div class="mb-3">
-    <strong>Teléfono:</strong> @Model.Telefono
-</div>
-<div class="mb-3">
-    <strong>Email:</strong> @Model.Email
-</div>
+        <h1 class="text-center mb-5 display-4 fw-semibold text-shadow title-highlight">🧑‍💼 Detalle del Inquilino</h1>
 
-<a asp-action="Index" class="btn btn-secondary">Volver</a>
+        <div class="card shadow-lg bg-glass">
+            <div class="card-body">
+                <dl class="row fs-5">
+                    <dt class="col-sm-4 fw-bold">🆔 DNI</dt>
+                    <dd class="col-sm-8">@Model.DNI</dd>
+
+                    <dt class="col-sm-4 fw-bold">🧑 Apellido</dt>
+                    <dd class="col-sm-8">@Model.Apellido</dd>
+
+                    <dt class="col-sm-4 fw-bold">👨 Nombre</dt>
+                    <dd class="col-sm-8">@Model.Nombre</dd>
+
+                    <dt class="col-sm-4 fw-bold">📞 Teléfono</dt>
+                    <dd class="col-sm-8">@Model.Telefono</dd>
+
+                    <dt class="col-sm-4 fw-bold">📧 Email</dt>
+                    <dd class="col-sm-8">@Model.Email</dd>
+                </dl>
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <a class="btn btn-secondary px-4 py-2" asp-action="Index">↩️ Volver</a>
+        </div>
+    </div>
+</div>

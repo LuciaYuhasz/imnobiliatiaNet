@@ -9,7 +9,12 @@ builder.Services.AddScoped<imnobiliatiaNet.Repositorios.IPropietarioRepositorio,
 builder.Services.AddScoped<imnobiliatiaNet.Repositorios.IInquilinoRepositorio,
                            imnobiliatiaNet.Repositorios.InquilinoRepositorio>();
 
-
+builder.Services.AddScoped<imnobiliatiaNet.Repositorios.IInmuebleRepositorio,
+                           imnobiliatiaNet.Repositorios.InmuebleRepositorio>();
+builder.Services.AddScoped<imnobiliatiaNet.Repositorios.IContratoRepositorio,
+                           imnobiliatiaNet.Repositorios.ContratoRepositorio>();
+builder.Services.AddScoped<imnobiliatiaNet.Repositorios.IPagoRepositorio,
+                           imnobiliatiaNet.Repositorios.PagoRepositorio>();
 
 var app = builder.Build();
 

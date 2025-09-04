@@ -1,0 +1,72 @@
+@model IEnumerable<imnobiliatiaNet.Models.Pago>
+@{
+    ViewData["Title"] = "Pagos del Contrato";
+    var contrato = ViewBag.Contrato as imnobiliatiaNet.Models.Contrato;
+}
+
+<div class="container mt-5">
+    <div class="col-md-10 mx-auto">
+
+        <h1 class="text-center mb-4 display-5 fw-semibold text-shadow title-highlight">💳 Pagos del Contrato</h1>
+
+        <div class="card shadow-lg bg-glass mb-4">
+            <div class="card-body fs-5">
+                <p><strong>📄 Contrato:</strong> #@contrato?.Id</p>
+                <p><strong>🧑‍💼 Inquilino:</strong> @contrato?.Inquilino?.Apellido @contrato?.Inquilino?.Nombre</p>
+                <p><strong>🏠 Inmueble:</strong> @contrato?.Inmueble?.Direccion - @contrato?.Inmueble?.Tipo</p>
+            </div>
+        </div>
+
+        <div class="text-end mb-3">
+            <a asp-action="Create" asp-route-contratoId="@contrato?.Id" class="btn btn-primary px-4 py-2">➕ Nuevo
+                Pago</a>
+        </div>
+
+        <div class="card shadow-sm bg-glass">
+            <div class="card-body">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>📅 Fecha</th>
+                            <th>📝 Concepto</th>
+                            <th>💰 Importe</th>
+                            <th>📌 Estado</th>
+                            <th class="text-end">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var p in Model)
+                        {
+                            <tr class="@(p.Anulado ? "table-danger" : "")">
+                                <td>@p.NumeroPago</td>
+                                <td>@p.FechaPago.ToString("dd/MM/yyyy")</td>
+                                <td>@p.Concepto</td>
+                                <td>@p.Importe.ToString("C")</td>
+                                <td>
+                                    @if (p.Anulado)
+                                    {
+                                        <span class="badge bg-danger">Anulado</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success">Activo</span>
+                                    }
+                                </td>
+                                <td class="text-end">
+                                    @if (!p.Anulado)
+                                    {
+                                        <a asp-action="Edit" asp-route-id="@p.Id" class="btn btn-sm btn-warning me-1">✏️
+                                            Editar</a>
+                                        <a asp-action="Anular" asp-route-id="@p.Id" class="btn btn-sm btn-danger">🗑️ Anular</a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>

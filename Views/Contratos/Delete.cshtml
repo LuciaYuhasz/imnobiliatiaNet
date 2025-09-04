@@ -1,0 +1,42 @@
+@model imnobiliatiaNet.Models.Contrato
+
+@{
+    ViewData["Title"] = "Eliminar Contrato";
+}
+
+<div class="container d-flex justify-content-center mt-5">
+    <div class="col-md-8">
+
+        <h1 class="text-center mb-4 display-5 fw-semibold text-shadow title-highlight text-danger">🗑️ Eliminar Contrato
+        </h1>
+
+        <div class="card shadow-lg bg-glass">
+            <div class="card-body">
+                <h4 class="mb-4 text-center">¿Estás seguro que querés eliminar este contrato?</h4>
+
+                <dl class="row fs-5">
+                    <dt class="col-sm-4 fw-bold">🏠 Inmueble</dt>
+                    <dd class="col-sm-8">@Model.Inmueble?.Direccion - @Model.Inmueble?.Tipo</dd>
+
+                    <dt class="col-sm-4 fw-bold">🧑‍💼 Inquilino</dt>
+                    <dd class="col-sm-8">@Model.Inquilino?.Apellido @Model.Inquilino?.Nombre</dd>
+
+                    <dt class="col-sm-4 fw-bold">📅 Fecha Inicio</dt>
+                    <dd class="col-sm-8">@Model.FechaInicio.ToString("dd/MM/yyyy")</dd>
+
+                    <dt class="col-sm-4 fw-bold">📅 Fecha Fin</dt>
+                    <dd class="col-sm-8">@Model.FechaFin.ToString("dd/MM/yyyy")</dd>
+
+                    <dt class="col-sm-4 fw-bold">💰 Monto</dt>
+                    <dd class="col-sm-8">@Model.Monto.ToString("C")</dd>
+                </dl>
+
+                <form asp-action="Delete" method="post" class="text-center mt-4">
+                    <input type="hidden" asp-for="Id" />
+                    <button type="submit" class="btn btn-danger px-4 py-2 me-2">🗑️ Eliminar</button>
+                    <a asp-action="Index" class="btn btn-secondary px-4 py-2">↩️ Cancelar</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

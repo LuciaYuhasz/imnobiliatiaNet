@@ -1,0 +1,46 @@
+@model IEnumerable<imnobiliatiaNet.Models.Contrato>
+
+@{
+    ViewData["Title"] = "Contratos";
+}
+
+<h2>Contratos</h2>
+
+<p>
+    <a class="btn btn-primary" asp-action="Create">Nuevo Contrato</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Inmueble</th>
+            <th>Inquilino</th>
+            <th>Fecha Inicio</th>
+            <th>Fecha Fin</th>
+            <th>Monto</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Inmueble?.Direccion</td>
+                <td>@item.Inquilino?.Nombre</td>
+                <td>@item.FechaInicio.ToShortDateString()</td>
+                <td>@item.FechaFin.ToShortDateString()</td>
+                <td>@item.Monto</td>
+                <td>
+                    <a class="btn btn-sm btn-info" asp-action="Details" asp-route-id="@item.Id">Detalles</a> |
+                    <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
+                    <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
+                    <a class="btn btn-sm btn-outline-dark" asp-controller="Pagos" asp-action="Index"
+                        asp-route-contratoId="@item.Id">
+                        <i class="bi bi-cash-coin"></i> Pagos
+                    </a>
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

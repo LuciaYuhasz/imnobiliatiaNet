@@ -1,0 +1,17 @@
+@model imnobiliatiaNet.Models.Pago
+@{
+    ViewData["Title"] = "Editar Concepto";
+}
+
+<h2>Editar Concepto del Pago</h2>
+
+<form asp-action="Edit">
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="ContratoId" />
+    <div class="form-group">
+        <label asp-for="Concepto"></label>
+        <input asp-for="Concepto" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Guardar</button>
+    <a asp-action="Index" asp-route-contratoId="@Model.ContratoId" class="btn btn-secondary">Volver</a>
+</form>

@@ -56,7 +56,7 @@
                 <div class="card-body">
                     <i class="bi bi-people-fill text-primary mb-3"></i>
                     <h5 class="card-title">Propietarios</h5>
-                    <p class="card-text">Administrá la información de los propietarios fácilmente.</p>
+                    <p class="card-text">Acceso a informacion de los propietarios.</p>
                     <a asp-controller="Propietarios" asp-action="Index" class="btn btn-outline-primary px-4">Ir a
                         Propietarios</a>
                 </div>
@@ -65,9 +65,33 @@
         <div class="col-md-5 mb-4">
             <div class="card shadow-lg h-100">
                 <div class="card-body">
+                    <i class="bi bi-house-door-fill text-warning mb-3"></i>
+                    <h5 class="card-title">Inmuebles</h5>
+                    <p class="card-text">Administracion de propiedades.</p>
+                    <a asp-controller="Inmuebles" asp-action="Index" class="btn btn-outline-warning px-4">Ir a
+                        Inmuebles</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5 mb-4">
+            <div class="card shadow-lg h-100">
+                <div class="card-body">
+                    <i class="bi bi-cash-coin text-danger mb-3"></i>
+                    <h5 class="card-title">Contratos</h5>
+                    <p class="card-text">Registro y gestion de contratos y pagos.</p>
+                    <a asp-controller="Contratos" asp-action="Index" class="btn btn-outline-danger px-4">Ir a
+                        Contratos</a>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-5 mb-4">
+            <div class="card shadow-lg h-100">
+                <div class="card-body">
                     <i class="bi bi-person-badge-fill text-success mb-3"></i>
                     <h5 class="card-title">Inquilinos</h5>
-                    <p class="card-text">Gestioná inquilinos actuales y sus datos de contacto.</p>
+                    <p class="card-text">Gestion de inquilinos actuales y sus datos de contacto.</p>
                     <a asp-controller="Inquilinos" asp-action="Index" class="btn btn-outline-success px-4">Ir a
                         Inquilinos</a>
                 </div>

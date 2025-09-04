@@ -1,0 +1,14 @@
+@model imnobiliatiaNet.Models.Pago
+@{
+    ViewData["Title"] = "Anular Pago";
+}
+
+<h2>Anular Pago</h2>
+
+<p>¿Estás seguro que querés anular el pago número <strong>@Model.NumeroPago</strong>?</p>
+
+<form asp-action="Anular">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Anular</button>
+    <a asp-action="Index" asp-route-contratoId="@Model.ContratoId" class="btn btn-secondary">Cancelar</a>
+</form>

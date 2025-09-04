@@ -110,6 +110,11 @@ namespace imnobiliatiaNet.Repositorios
             Telefono = r["Telefono"]?.ToString() ?? "",
             Email = r["Email"]?.ToString() ?? ""
         };
+        public async Task<IList<Inquilino>> ObtenerTodosAsync()
+        {
+            return await ListarAsync();
+        }
+
     }
 }
 

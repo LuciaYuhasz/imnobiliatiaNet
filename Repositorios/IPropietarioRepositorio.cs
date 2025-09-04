@@ -9,6 +9,7 @@ namespace imnobiliatiaNet.Repositorios
         Task<int> CrearAsync(Propietario p);
         Task<bool> ActualizarAsync(Propietario p);
         Task<bool> BorrarAsync(int id);
+        Task<IList<Propietario>> ObtenerTodosAsync();
     }
 
 }

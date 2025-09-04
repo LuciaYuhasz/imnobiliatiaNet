@@ -42,3 +42,20 @@ body {
   background-size: cover;
   min-height: 100vh;
 }
+
+.bg-glass {
+  background-color: rgba(255, 255, 255, 0.75);
+  /* blanco con 75% opacidad */
+  backdrop-filter: blur(6px);
+  /* efecto de desenfoque detrás */
+  border-radius: 12px;
+}
+
+.text-shadow {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+dl.row.fs-5 dt,
+dl.row.fs-5 dd {
+  margin-bottom: 1rem;
+}

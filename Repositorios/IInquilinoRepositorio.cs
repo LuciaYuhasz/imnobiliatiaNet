@@ -9,6 +9,8 @@ namespace imnobiliatiaNet.Repositorios
         Task<IList<Inquilino>> ListarAsync(string? filtro = null);
         Task<bool> ActualizarAsync(Inquilino i);
         Task<bool> BorrarAsync(int id);
+        Task<IList<Inquilino>> ObtenerTodosAsync();
+
     }
 }
 

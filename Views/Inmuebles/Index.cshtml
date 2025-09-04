@@ -1,0 +1,44 @@
+@model IEnumerable<imnobiliatiaNet.Models.Inmueble>
+@{
+    ViewData["Title"] = "Inmuebles";
+}
+
+<h1>Inmuebles</h1>
+
+<p>
+    <a class="btn btn-primary" asp-action="Crear">Nuevo Inmueble</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Dirección</th>
+            <th>Uso</th>
+            <th>Tipo</th>
+            <th>Ambientes</th>
+            <th>Precio</th>
+            <th>Disponible</th>
+            <th>Propietario</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var i in Model)
+        {
+            <tr>
+                <td>@i.Direccion</td>
+                <td>@i.Uso</td>
+                <td>@i.Tipo</td>
+                <td>@i.Ambientes</td>
+                <td>@i.Precio</td>
+                <td>@(i.Disponible ? "Sí" : "No")</td>
+                <td>@(i.Propietario?.Apellido) @i.Propietario?.Nombre</td>
+                <td class="text-end">
+                    <a class="btn btn-sm btn-secondary" asp-action="Detalle" asp-route-id="@i.Id">Ver</a>
+                    <a class="btn btn-sm btn-warning" asp-action="Editar" asp-route-id="@i.Id">Editar</a>
+                    <a class="btn btn-sm btn-danger" asp-action="Eliminar" asp-route-id="@i.Id">Eliminar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

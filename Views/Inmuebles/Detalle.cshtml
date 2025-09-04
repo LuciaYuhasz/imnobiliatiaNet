@@ -1,0 +1,65 @@
+@model imnobiliatiaNet.Models.Inmueble
+@{
+    ViewData["Title"] = "Detalle del Inmueble";
+}
+
+<div class="container d-flex justify-content-center mt-5">
+    <div class="col-md-8">
+
+        <h1 class="text-center mb-5 display-4 fw-semibold text-shadow title-highlight">🏠 Detalle del Inmueble</h1>
+
+
+
+        <div class="card shadow-lg bg-glass">
+
+            <div class="card-body">
+                <dl class="row fs-5">
+                    <dt class="col-sm-4 fw-bold">📍 Dirección</dt>
+                    <dd class="col-sm-8">@Model.Direccion</dd>
+
+                    <dt class="col-sm-4 fw-bold">🏢 Uso</dt>
+                    <dd class="col-sm-8">@Model.Uso</dd>
+
+                    <dt class="col-sm-4 fw-bold">🏘️ Tipo</dt>
+                    <dd class="col-sm-8">@Model.Tipo</dd>
+
+                    <dt class="col-sm-4 fw-bold">🛋️ Ambientes</dt>
+                    <dd class="col-sm-8">@Model.Ambientes</dd>
+
+                    <dt class="col-sm-4 fw-bold">💲 Precio</dt>
+                    <dd class="col-sm-8">@Model.Precio.ToString("C")</dd>
+
+                    <dt class="col-sm-4 fw-bold">📦 Disponible</dt>
+                    <dd class="col-sm-8">
+                        @if (Model.Disponible)
+                        {
+                            <span class="badge bg-success px-3 py-2">Sí</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger px-3 py-2">No</span>
+                        }
+                    </dd>
+
+                    <dt class="col-sm-4 fw-bold">🧭 Latitud</dt>
+                    <dd class="col-sm-8">
+                        @(Model.Latitud.HasValue? Model.Latitud.Value.ToString("F6") : "No especificada")
+                    </dd>
+
+                    <dt class="col-sm-4 fw-bold">🧭 Longitud</dt>
+                    <dd class="col-sm-8">
+                        @(Model.Longitud.HasValue? Model.Longitud.Value.ToString("F6") : "No especificada")
+                    </dd>
+
+                    <dt class="col-sm-4 fw-bold">👤 Propietario</dt>
+                    <dd class="col-sm-8">@Model.Propietario?.Apellido @Model.Propietario?.Nombre</dd>
+                </dl>
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <a class="btn btn-warning me-2 px-4 py-2" asp-action="Editar" asp-route-id="@Model.Id">✏️ Editar</a>
+            <a class="btn btn-secondary px-4 py-2" asp-action="Index">↩️ Volver</a>
+        </div>
+    </div>
+</div>

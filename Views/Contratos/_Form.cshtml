@@ -1,0 +1,29 @@
+@model imnobiliatiaNet.Models.Contrato
+
+<div class="form-group">
+    <label asp-for="InmuebleId" class="control-label"></label>
+    <select asp-for="InmuebleId" class="form-control" asp-items="ViewBag.Inmuebles"></select>
+</div>
+
+<div class="form-group">
+    <label asp-for="InquilinoId" class="control-label"></label>
+    <select asp-for="InquilinoId" class="form-control" asp-items="ViewBag.Inquilinos"></select>
+</div>
+
+<div class="form-group">
+    <label asp-for="FechaInicio" class="control-label"></label>
+    <input asp-for="FechaInicio" class="form-control" type="date" />
+</div>
+
+<div class="form-group">
+    <label asp-for="FechaFin" class="control-label"></label>
+    <input asp-for="FechaFin" class="form-control" type="date" />
+</div>
+
+<div class="form-group">
+    <label asp-for="Monto" class="control-label"></label>
+    <input asp-for="Monto" class="form-control" />
+</div>
+
+<input type="submit" value="Guardar" class="btn btn-success" />
+<a asp-action="Index" class="btn btn-secondary">Volver</a>

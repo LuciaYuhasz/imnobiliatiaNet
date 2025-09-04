@@ -70,6 +70,22 @@ namespace imnobiliatiaNet.Repositorios
             return lista;
         }
 
+        //metodo para el inmueble
+        public async Task<IList<Propietario>> ObtenerTodosAsync()
+        {
+            using var conn = _db.OpenConnection();
+            using var cmd = (MySqlCommand)conn.CreateCommand();
+            cmd.CommandText = @"SELECT * FROM Propietario ORDER BY Apellido, Nombre;";
+
+            var lista = new List<Propietario>();
+            using var rd = await cmd.ExecuteReaderAsync();
+            while (await rd.ReadAsync())
+                lista.Add(Map(rd));
+
+            return lista;
+        }
+
+
         public async Task<bool> ActualizarAsync(Propietario p)
         {
             using var conn = _db.OpenConnection();
