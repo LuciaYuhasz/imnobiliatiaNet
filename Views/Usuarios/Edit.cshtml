@@ -1,0 +1,34 @@
+@model Usuario
+@{
+    ViewData["Title"] = "Editar usuario";
+}
+
+<h2>✏️ Editar usuario</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" name="Id" value="@Model.Id" />
+    <div class="form-group">
+        <label>Nombre</label>
+        <input name="Nombre" class="form-control" value="@Model.Nombre" required />
+    </div>
+    <div class="form-group">
+        <label>Email</label>
+        <input name="Email" class="form-control" value="@Model.Email" required />
+    </div>
+    <div class="form-group">
+        <label>Rol</label>
+        <select name="Rol" class="form-control">
+            <option value="Administrador" selected="@("Administrador" == Model.Rol)">Administrador</option>
+            <option value="Empleado" selected="@("Empleado" == Model.Rol)">Empleado</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Contraseña (dejar en blanco si no se cambia)</label>
+        <input name="Clave" type="password" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Avatar URL</label>
+        <input name="AvatarUrl" class="form-control" value="@Model.AvatarUrl" />
+    </div>
+    <button type="submit" class="btn btn-primary mt-3">Guardar cambios</button>
+</form>

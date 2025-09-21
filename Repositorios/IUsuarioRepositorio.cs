@@ -1,3 +1,5 @@
+
+
 using imnobiliatiaNet.Models;
 
 namespace imnobiliatiaNet.Repositorios
@@ -8,7 +10,8 @@ namespace imnobiliatiaNet.Repositorios
         Task<Usuario?> ObtenerPorIdAsync(int id);
         Task<IList<Usuario>> ObtenerTodosAsync();
         Task<int> CrearAsync(Usuario u);
-        Task<bool> ActualizarAsync(Usuario u);
+        Task<bool> ActualizarAsync(Usuario u); // o ModificarAsync, pero no ambos
         Task<bool> BorrarAsync(int id);
+        Task<Usuario?> ObtenerPorEmailAsync(string email);
     }
 }

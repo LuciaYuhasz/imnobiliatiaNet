@@ -2,6 +2,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+// 🧠 Sesión
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 // ADO.NET helper
 builder.Services.AddSingleton<imnobiliatiaNet.Data.Db>();
 builder.Services.AddScoped<imnobiliatiaNet.Repositorios.IPropietarioRepositorio,
@@ -15,6 +23,12 @@ builder.Services.AddScoped<imnobiliatiaNet.Repositorios.IContratoRepositorio,
                            imnobiliatiaNet.Repositorios.ContratoRepositorio>();
 builder.Services.AddScoped<imnobiliatiaNet.Repositorios.IPagoRepositorio,
                            imnobiliatiaNet.Repositorios.PagoRepositorio>();
+builder.Services.AddScoped<imnobiliatiaNet.Repositorios.IUsuarioRepositorio,
+                           imnobiliatiaNet.Repositorios.UsuarioRepositorio>();
+
+
+
+
 
 var app = builder.Build();
 
@@ -27,6 +41,8 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseSession();
+
 app.UseRouting();
 
 app.UseAuthorization();

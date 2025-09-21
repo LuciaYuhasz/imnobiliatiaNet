@@ -8,11 +8,13 @@ namespace imnobiliatiaNet.Controllers
     {
         private readonly IPagoRepositorio _pagoRepo;
         private readonly IContratoRepositorio _contratoRepo;
+        private readonly IUsuarioRepositorio _usuarioRepo;
 
-        public PagosController(IPagoRepositorio pagoRepo, IContratoRepositorio contratoRepo)
+        public PagosController(IPagoRepositorio pagoRepo, IContratoRepositorio contratoRepo, IUsuarioRepositorio usuarioRepo)
         {
             _pagoRepo = pagoRepo;
             _contratoRepo = contratoRepo;
+            _usuarioRepo = usuarioRepo;
         }
 
         // Listar pagos de un contrato
@@ -40,11 +42,15 @@ namespace imnobiliatiaNet.Controllers
         {
             if (ModelState.IsValid)
             {
+                pago.UsuarioAltaId = HttpContext.Session.GetInt32("UsuarioId") ?? 1;
+
+
                 await _pagoRepo.CrearAsync(pago);
                 return RedirectToAction(nameof(Index), new { contratoId = pago.ContratoId });
             }
             return View(pago);
         }
+
 
         // GET: Editar concepto
         public async Task<IActionResult> Edit(int id)
@@ -75,16 +81,36 @@ namespace imnobiliatiaNet.Controllers
             return View(pago);
         }
 
-        // POST: Anular pago
-        [HttpPost, ActionName("Anular")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AnularConfirmed(int id)
+        public async Task<IActionResult> Anular(int id, string motivo)
         {
             var pago = await _pagoRepo.ObtenerPorIdAsync(id);
             if (pago == null) return NotFound();
 
-            await _pagoRepo.AnularAsync(id);
+            var claim = User.FindFirst("Id");
+            int usuarioId = claim != null && int.TryParse(claim.Value, out var idUsuario) ? idUsuario : 1;
+
+            await _pagoRepo.AnularAsync(id, usuarioId, motivo);
             return RedirectToAction(nameof(Index), new { contratoId = pago.ContratoId });
         }
+        public async Task<IActionResult> Details(int id)
+        {
+            var pago = await _pagoRepo.ObtenerPorIdAsync(id);
+            if (pago == null) return NotFound();
+
+            // Cargar datos del usuario creador
+            if (pago.UsuarioAltaId.HasValue)
+                pago.UsuarioAlta = await _usuarioRepo.ObtenerPorIdAsync(pago.UsuarioAltaId.Value);
+
+            // Cargar datos del usuario anulador
+            if (pago.UsuarioAnulacionId.HasValue)
+                pago.UsuarioAnulacion = await _usuarioRepo.ObtenerPorIdAsync(pago.UsuarioAnulacionId.Value);
+
+            return View(pago);
+        }
+
+
+
     }
 }

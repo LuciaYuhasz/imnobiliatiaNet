@@ -9,5 +9,7 @@ namespace imnobiliatiaNet.Repositorios
         Task<IList<Inmueble>> ObtenerTodosAsync(string? filtro = null, bool? disponibles = null);
         Task<bool> ModificarAsync(Inmueble i);
         Task<bool> BajaAsync(int id);
+        Task<IList<Inmueble>> ObtenerDisponiblesEntreFechasAsync(DateTime inicio, DateTime fin);
+
     }
 }

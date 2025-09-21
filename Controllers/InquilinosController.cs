@@ -101,14 +101,7 @@ namespace inmobiliatiaNet.Controllers
             }
         }
 
-        /*// POST: /Inquilinos/Eliminar/5
-        [HttpPost, ActionName("Eliminar")]
-        public async Task<IActionResult> EliminarConfirmado(int id)
-        {
-            var borrado = await _repo.BorrarAsync(id);
-            if (!borrado) return NotFound();
-            return RedirectToAction("Index");
-        }*/
+
     }
 }
 

@@ -1,0 +1,58 @@
+@model IList<imnobiliatiaNet.Models.Inmueble>
+@{
+    ViewData["Title"] = "Inmuebles disponibles por fechas";
+}
+
+<h2>📅 Buscar inmuebles disponibles</h2>
+
+<form method="get" asp-action="DisponiblesPorFechas">
+    <div class="row mb-3">
+        <div class="col-md-5">
+            <label>Fecha inicio</label>
+            <input type="date" name="inicio" class="form-control" required />
+        </div>
+        <div class="col-md-5">
+            <label>Fecha fin</label>
+            <input type="date" name="fin" class="form-control" required />
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary">Buscar</button>
+        </div>
+    </div>
+</form>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+@if (Model.Any())
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Dirección</th>
+                <th>Tipo</th>
+                <th>Uso</th>
+                <th>Ambientes</th>
+                <th>Precio</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var i in Model)
+            {
+                <tr>
+                    <td>@i.Direccion</td>
+                    <td>@i.Tipo</td>
+                    <td>@i.Uso</td>
+                    <td>@i.Ambientes</td>
+                    <td>@i.Precio</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No se encontraron inmuebles disponibles en ese rango.</p>
+}

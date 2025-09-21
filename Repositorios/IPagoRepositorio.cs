@@ -8,6 +8,8 @@ namespace imnobiliatiaNet.Repositorios
         Task<Pago?> ObtenerPorIdAsync(int id);
         Task<IList<Pago>> ObtenerPorContratoAsync(int contratoId);
         Task<bool> ActualizarConceptoAsync(Pago p);
-        Task<bool> AnularAsync(int id);
+
+        // Nuevo método con auditoría
+        Task<bool> AnularAsync(int id, int usuarioId, string motivo);
     }
 }

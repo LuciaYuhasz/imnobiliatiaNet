@@ -10,3 +10,5 @@ namespace imnobiliatiaNet.Models
         public string? AvatarUrl { get; set; }
     }
 }
+
+

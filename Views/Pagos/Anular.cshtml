@@ -1,14 +1,33 @@
 @model imnobiliatiaNet.Models.Pago
+
+
 @{
     ViewData["Title"] = "Anular Pago";
 }
 
-<h2>Anular Pago</h2>
+<h2 class="mb-4">🛑 Anular Pago</h2>
 
-<p>¿Estás seguro que querés anular el pago número <strong>@Model.NumeroPago</strong>?</p>
+<div class="card shadow-sm p-4">
+    <p>¿Estás seguro que querés anular el pago número <strong>@Model.NumeroPago</strong></p>
+    <p><strong>Concepto:</strong> @Model.Concepto</p>
+    <p><strong>Importe:</strong> $@Model.Importe.ToString("N2")</p>
 
-<form asp-action="Anular">
-    <input type="hidden" asp-for="Id" />
-    <button type="submit" class="btn btn-danger">Anular</button>
-    <a asp-action="Index" asp-route-contratoId="@Model.ContratoId" class="btn btn-secondary">Cancelar</a>
-</form>
+    <form asp-action="Anular" method="post">
+        <input type="hidden" asp-for="Id" />
+
+        <div class="form-group mt-3">
+            <label for="motivo">Motivo de anulación</label>
+            <input type="text" name="motivo" class="form-control" required />
+        </div>
+
+        <div class="mt-4">
+            <button type="submit" class="btn btn-danger me-2">✅ Confirmar anulación</button>
+            <a asp-action="Index" asp-route-contratoId="@Model.ContratoId" class="btn btn-secondary">↩️ Cancelar</a>
+        </div>
+    </form>
+</div>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger mt-3">@TempData["Error"]</div>
+}

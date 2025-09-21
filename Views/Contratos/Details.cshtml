@@ -26,6 +26,18 @@
 
                     <dt class="col-sm-4 fw-bold">🧑‍💼 Inquilino</dt>
                     <dd class="col-sm-8">@Model.Inquilino?.Apellido @Model.Inquilino?.Nombre</dd>
+                    @if (Model.FechaTerminacionAnticipada != null)
+                    {
+                        <p><strong>Terminación anticipada:</strong>
+                            @Model.FechaTerminacionAnticipada.Value.ToShortDateString()</p>
+                        <p><strong>Multa aplicada:</strong> $@Model.MontoMulta.Value.ToString("N2")</p>
+                    }
+                    @if (Model.FechaTerminacionAnticipada == null)
+                    {
+                        <a class="btn btn-danger px-4 py-2" asp-action="Terminar" asp-route-id="@Model.Id">🛑 Terminar
+                            anticipadamente</a>
+                    }
+
                 </dl>
             </div>
         </div>

@@ -1,0 +1,51 @@
+@model imnobiliatiaNet.Models.Pago
+@{
+    ViewData["Title"] = "Detalle del Pago";
+    var rol = Context.Session.GetString("UsuarioRol");
+}
+
+<div class="container mt-5">
+    <div class="col-md-8 mx-auto">
+
+        <h1 class="text-center mb-4 display-5 fw-semibold text-shadow title-highlight">💳 Detalle del Pago</h1>
+
+        <div class="card shadow-lg bg-glass">
+            <div class="card-body fs-5">
+                <p><strong>Contrato:</strong> #@Model.Contrato?.Id</p>
+                <p><strong>Inquilino:</strong> @Model.Contrato?.Inquilino?.Apellido @Model.Contrato?.Inquilino?.Nombre
+                </p>
+                <p><strong>Inmueble:</strong> @Model.Contrato?.Inmueble?.Direccion - @Model.Contrato?.Inmueble?.Tipo</p>
+
+                <hr />
+
+                <p><strong>Número de pago:</strong> @Model.NumeroPago</p>
+                <p><strong>Fecha:</strong> @Model.FechaPago.ToString("dd/MM/yyyy")</p>
+                <p><strong>Concepto:</strong> @Model.Concepto</p>
+                <p><strong>Importe:</strong> @Model.Importe.ToString("C")</p>
+                <p><strong>Estado:</strong> @(Model.Anulado ? "Anulado" : "Activo")</p>
+
+                @if (rol == "Administrador")
+                {
+                    <hr />
+                    <h5>🕵️ Auditoría</h5>
+                    @if (Model.UsuarioAlta != null)
+                    {
+                        <p><strong>Creado por:</strong> @Model.UsuarioAlta.Nombre (@Model.UsuarioAlta.Rol)</p>
+                    }
+
+                    @if (Model.UsuarioAnulacionId.HasValue)
+                    {
+                        <p><strong>Anulado por usuario ID:</strong> @Model.UsuarioAnulacionId</p>
+                        <p><strong>Motivo:</strong> @Model.MotivoAnulacion</p>
+                        <p><strong>Fecha de anulación:</strong> @Model.FechaModificacion?.ToShortDateString()</p>
+                    }
+                }
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <a class="btn btn-secondary px-4 py-2" asp-action="Index" asp-route-contratoId="@Model.ContratoId">↩️
+                Volver</a>
+        </div>
+    </div>
+</div>

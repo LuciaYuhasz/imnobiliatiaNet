@@ -1,0 +1,26 @@
+@model Contrato
+@{
+    ViewData["Title"] = "Terminar contrato";
+}
+
+<h2>Terminar contrato</h2>
+
+<form asp-action="Terminar" method="post">
+    <input type="hidden" asp-for="Id" />
+    <p><strong>Inicio:</strong> @Model.FechaInicio.ToShortDateString()</p>
+    <p><strong>Fin:</strong> @Model.FechaFin.ToShortDateString()</p>
+
+
+    <div class="form-group">
+        <label for="fechaTerminacion">Fecha de terminación anticipada</label>
+        <input type="date" name="fechaTerminacion" class="form-control" required />
+    </div>
+
+    <button type="submit" class="btn btn-danger">Confirmar terminación</button>
+    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">Cancelar</a>
+</form>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}

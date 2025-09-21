@@ -1,0 +1,131 @@
+@{
+    ViewData["Title"] = "Bienvenidos a Inmobiliaria ULP";
+}
+
+<style>
+    body {
+
+
+        background: url('/img/imb2.jpg') no-repeat center center fixed;
+        background-size: cover;
+    }
+
+
+    .hero-section {
+        padding: 60px 0;
+    }
+
+    .hero-section h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        color: #2c3e50;
+    }
+
+    .hero-section p.lead {
+        font-size: 1.3rem;
+        color: #34495e;
+    }
+
+    .card {
+        transition: transform 0.3s ease-in-out;
+        border: none;
+        border-radius: 15px;
+    }
+
+    .card:hover {
+        transform: scale(1.03);
+    }
+
+    .card .btn {
+        border-radius: 50px;
+    }
+
+    .card-body i {
+        font-size: 3rem;
+    }
+</style>
+
+<div class="container hero-section text-center">
+    <h1 class="display-4">¡Bienvenidos a Inmobiliaria NET 🏡!</h1>
+    <p class="lead">Espacio digital para administrar propiedades, propietarios e inquilinos de manera rápida y segura.
+    </p>
+
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-5 mb-4">
+            <div class="card shadow-lg h-100">
+                <div class="card-body">
+                    <i class="bi bi-people-fill text-primary mb-3"></i>
+                    <h5 class="card-title">Propietarios</h5>
+                    <p class="card-text">Acceso a informacion de los propietarios.</p>
+                    <a asp-controller="Propietarios" asp-action="Index" class="btn btn-outline-primary px-4">Ir a
+                        Propietarios</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5 mb-4">
+            <div class="card shadow-lg h-100">
+                <div class="card-body">
+                    <i class="bi bi-house-door-fill text-warning mb-3"></i>
+                    <h5 class="card-title">Inmuebles</h5>
+                    <p class="card-text">Administracion de propiedades.</p>
+                    <a asp-controller="Inmuebles" asp-action="Index" class="btn btn-outline-warning px-4">Ir a
+                        Inmuebles</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5 mb-4">
+            <div class="card shadow-lg h-100">
+                <div class="card-body">
+                    <i class="bi bi-cash-coin text-danger mb-3"></i>
+                    <h5 class="card-title">Contratos</h5>
+                    <p class="card-text">Registro y gestion de contratos y pagos.</p>
+                    <a asp-controller="Contratos" asp-action="Index" class="btn btn-outline-danger px-4">Ir a
+                        Contratos</a>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-5 mb-4">
+            <div class="card shadow-lg h-100">
+                <div class="card-body">
+                    <i class="bi bi-person-badge-fill text-success mb-3"></i>
+                    <h5 class="card-title">Inquilinos</h5>
+                    <p class="card-text">Gestion de inquilinos actuales y sus datos de contacto.</p>
+                    <a asp-controller="Inquilinos" asp-action="Index" class="btn btn-outline-success px-4">Ir a
+                        Inquilinos</a>
+                </div>
+            </div>
+        </div>
+        @{
+            var rol = Context.Session.GetString("UsuarioRol");
+        }
+
+        @if (rol == "Administrador")
+        {
+            <div class="col-md-5 mb-4">
+                <div class="card shadow-lg h-100">
+                    <div class="card-body">
+                        <i class="bi bi-person-lines-fill text-dark mb-3"></i>
+                        <h5 class="card-title">Gestión de usuarios</h5>
+                        <p class="card-text">Alta, baja y modificación de usuarios del sistema.</p>
+                        <a asp-controller="Usuarios" asp-action="Index" class="btn btn-outline-dark px-4">Ir a Usuarios</a>
+                    </div>
+                </div>
+            </div>
+        }
+        <div class="col-md-5 mb-4">
+            <div class="card shadow-lg h-100">
+                <div class="card-body">
+                    <i class="bi bi-person-circle text-secondary mb-3"></i>
+                    <h5 class="card-title">Mi perfil</h5>
+                    <p class="card-text">Editá tu nombre, contraseña y avatar.</p>
+                    <a asp-controller="Auth" asp-action="Perfil" class="btn btn-outline-secondary px-4">Ir a Mi
+                        Perfil</a>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>

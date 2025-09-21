@@ -50,9 +50,22 @@ namespace imnobiliatiaNet.Controllers
         {
             if (ModelState.IsValid)
             {
+                int usuarioId = HttpContext.Session.GetInt32("UsuarioId") ?? 1;
+
+
+                contrato.UsuarioCreadorId = usuarioId;
+                // Verificar superposición de fechas
+                if (await _contratoRepo.ExisteSuperposicionAsync(contrato.InmuebleId, contrato.FechaInicio, contrato.FechaFin))
+                {
+                    TempData["Error"] = "Ya existe un contrato para ese inmueble en ese rango de fechas.";
+                    await CargarListasAsync();
+                    return View(contrato);
+                }
+
                 await _contratoRepo.AltaAsync(contrato);
                 return RedirectToAction(nameof(Index));
             }
+
 
             await CargarListasAsync();
             return View(contrato);
@@ -79,6 +92,14 @@ namespace imnobiliatiaNet.Controllers
 
             if (ModelState.IsValid)
             {
+                // Verificar superposición de fechas excluyendo el contrato actual
+                if (await _contratoRepo.ExisteSuperposicionAsync(contrato.InmuebleId, contrato.FechaInicio, contrato.FechaFin, contrato.Id))
+                {
+                    TempData["Error"] = "Ya existe un contrato para ese inmueble en ese rango de fechas.";
+                    await CargarListasAsync();
+                    return View(contrato);
+                }
+
                 var actualizado = await _contratoRepo.ModificarAsync(contrato);
                 if (!actualizado)
                     return NotFound();
@@ -90,51 +111,48 @@ namespace imnobiliatiaNet.Controllers
             return View(contrato);
         }
 
-        // GET: Contratos/Delete/5
-        public async Task<IActionResult> Delete(int id)
+
+
+        public async Task<IActionResult> Terminar(int id)
         {
             var contrato = await _contratoRepo.ObtenerPorIdAsync(id);
             if (contrato == null)
                 return NotFound();
 
-            return View(contrato);
+            return View(contrato); // Vista con confirmación y fecha de terminación
         }
-        [HttpPost, ActionName("Delete")]
+
+        // POST: Contratos/Terminar/5
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> Terminar(int id, DateTime fechaTerminacion)
         {
-            try
-            {
-                var eliminado = await _contratoRepo.BajaAsync(id);
-                if (!eliminado)
-                    return NotFound();
+            var contrato = await _contratoRepo.ObtenerPorIdAsync(id);
+            if (contrato == null)
+                return NotFound();
 
-                return RedirectToAction(nameof(Index));
-            }
-            catch (MySqlException ex) when (ex.Number == 1451) // Error de clave foránea
+            // Validación de fecha
+            if (fechaTerminacion <= contrato.FechaInicio || fechaTerminacion > contrato.FechaFin)
             {
-                TempData["Error"] = "No se puede eliminar el contrato porque tiene pagos asociados.";
-                return RedirectToAction("Delete", new { id });
+                TempData["Error"] = "La fecha de terminación debe estar entre el inicio y el fin del contrato.";
+                return RedirectToAction("Terminar", new { id });
             }
-            catch (Exception)
+
+            int usuarioId = HttpContext.Session.GetInt32("UsuarioId") ?? 1;
+
+
+            var resultado = await _contratoRepo.TerminarAnticipadamenteAsync(id, fechaTerminacion, usuarioId);
+            if (!resultado)
             {
-                TempData["Error"] = "Ocurrió un error inesperado al intentar eliminar el contrato.";
-                return RedirectToAction("Delete", new { id });
+                TempData["Error"] = "No se pudo registrar la terminación anticipada.";
+                return RedirectToAction("Terminar", new { id });
             }
+
+            TempData["Exito"] = "Contrato terminado anticipadamente.";
+            return RedirectToAction(nameof(Details), new { id });
         }
 
-        /*
-                        // POST: Contratos/Delete/5
-                        [HttpPost, ActionName("Delete")]
-                        [ValidateAntiForgeryToken]
-                        public async Task<IActionResult> DeleteConfirmed(int id)
-                        {
-                            var eliminado = await _contratoRepo.BajaAsync(id);
-                            if (!eliminado)
-                                return NotFound();
 
-                            return RedirectToAction(nameof(Index));
-                        }*/
 
         // ✅ Método auxiliar para cargar listas de inmuebles e inquilinos
         private async Task CargarListasAsync()

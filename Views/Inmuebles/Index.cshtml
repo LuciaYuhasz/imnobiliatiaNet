@@ -15,6 +15,29 @@
 <p>
     <a class="btn btn-primary" asp-action="Crear">Nuevo Inmueble</a>
 </p>
+<p>
+    <a class="btn btn-primary" asp-action="Crear">➕ Nuevo Inmueble</a>
+    <a class="btn btn-outline-info ms-2" asp-action="DisponiblesPorFechas">📅 Ver disponibles por fechas</a>
+</p>
+
+<form method="get" asp-action="Index" class="mb-3">
+    <div class="row">
+        <div class="col-md-4">
+            <input type="text" name="filtro" class="form-control" placeholder="Buscar por dirección..." />
+        </div>
+        <div class="col-md-4">
+            <select name="disponibles" class="form-control">
+                <option value="">-- Todos --</option>
+                <option value="true">Solo disponibles</option>
+                <option value="false">Solo no disponibles</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-primary">Filtrar</button>
+        </div>
+    </div>
+</form>
+
 
 <table class="table table-striped">
     <thead>

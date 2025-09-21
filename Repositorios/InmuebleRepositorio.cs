@@ -151,5 +151,31 @@ namespace imnobiliatiaNet.Repositorios
                 Nombre = r["Nombre"].ToString() ?? ""
             }
         };
+        public async Task<IList<Inmueble>> ObtenerDisponiblesEntreFechasAsync(DateTime inicio, DateTime fin)
+        {
+            var lista = new List<Inmueble>();
+            using var conn = _db.OpenConnection();
+            using var cmd = (MySqlCommand)conn.CreateCommand();
+
+            cmd.CommandText = @"
+        SELECT i.*, p.Apellido, p.Nombre
+        FROM Inmueble i
+        JOIN Propietario p ON i.PropietarioId = p.Id
+        WHERE i.Id NOT IN (
+            SELECT c.InmuebleId FROM Contrato c
+            WHERE NOT (c.FechaFin < @inicio OR c.FechaInicio > @fin)
+        );";
+
+            cmd.Parameters.AddWithValue("@inicio", inicio);
+            cmd.Parameters.AddWithValue("@fin", fin);
+
+            using var rd = await cmd.ExecuteReaderAsync();
+            while (await rd.ReadAsync())
+                lista.Add(Map(rd));
+
+            return lista;
+        }
+
+
     }
 }

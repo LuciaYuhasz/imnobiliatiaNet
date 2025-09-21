@@ -34,6 +34,9 @@
                     <a class="btn btn-sm btn-info" asp-action="Details" asp-route-id="@item.Id">Detalles</a> |
                     <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
                     <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
+                    <a class="btn btn-sm btn-danger" asp-action="Terminar" asp-route-id="@item.Id">🛑 Terminar</a>
+
+
                     <a class="btn btn-sm btn-outline-dark" asp-controller="Pagos" asp-action="Index"
                         asp-route-contratoId="@item.Id">
                         <i class="bi bi-cash-coin"></i> Pagos

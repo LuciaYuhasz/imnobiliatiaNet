@@ -49,12 +49,6 @@ namespace imnobiliatiaNet.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        /*public async Task<IActionResult> Editar(int id)
-        {
-            var i = await _repo.ObtenerPorIdAsync(id);
-            if (i == null) return NotFound();
-            return View(i);
-        }*/
         public async Task<IActionResult> Editar(int id)
         {
             var i = await _repo.ObtenerPorIdAsync(id);
@@ -65,15 +59,7 @@ namespace imnobiliatiaNet.Controllers
 
             return View(i);
         }
-        /*
-                [HttpPost]
-                public async Task<IActionResult> Editar(Inmueble i)
-                {
-                    if (!ModelState.IsValid) return View(i);
-                    await _repo.ModificarAsync(i);
-                    return RedirectToAction(nameof(Index));
-                }
-        */
+
         [HttpPost]
         public async Task<IActionResult> Editar(Inmueble i)
         {
@@ -95,11 +81,7 @@ namespace imnobiliatiaNet.Controllers
             return View(i);
         }
 
-        /*public async Task<IActionResult> Eliminar(int id)
-        {
-            await _repo.BajaAsync(id);
-            return RedirectToAction(nameof(Index));
-        }*/
+
         public async Task<IActionResult> Eliminar(int id)
         {
             try
@@ -120,6 +102,17 @@ namespace imnobiliatiaNet.Controllers
                 TempData["Error"] = "Ocurrió un error inesperado al intentar eliminar el inmueble.";
                 return RedirectToAction(nameof(Index));
             }
+        }
+        public async Task<IActionResult> DisponiblesPorFechas(DateTime? inicio, DateTime? fin)
+        {
+            if (!inicio.HasValue || !fin.HasValue || inicio > fin)
+            {
+                TempData["Error"] = "Debés ingresar un rango de fechas válido.";
+                return View(new List<Inmueble>());
+            }
+
+            var lista = await _repo.ObtenerDisponiblesEntreFechasAsync(inicio.Value, fin.Value);
+            return View(lista);
         }
 
 
