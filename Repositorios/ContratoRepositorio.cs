@@ -241,7 +241,109 @@ namespace imnobiliatiaNet.Repositorios
             var count = Convert.ToInt32(await cmd.ExecuteScalarAsync());
             return count > 0;
         }
+        public async Task<Paginador<Contrato>> ObtenerPaginadoAsync(string? filtro, int pagina, int tamPagina)
+        {
+            var resultado = new Paginador<Contrato> { PaginaActual = pagina };
+            using var conn = _db.OpenConnection();
+            using var cmd = (MySqlCommand)conn.CreateCommand();
 
+            // Total de registros
+            cmd.CommandText = @"
+        SELECT COUNT(*) FROM Contrato c
+        JOIN Inquilino i ON c.InquilinoId = i.Id
+        JOIN Inmueble im ON c.InmuebleId = im.Id
+        WHERE (@filtro IS NULL OR i.Apellido LIKE @filtro OR i.Nombre LIKE @filtro OR im.Direccion LIKE @filtro);";
+            Add(cmd, "@filtro", filtro != null ? $"%{filtro}%" : DBNull.Value);
+            resultado.TotalPaginas = (int)Math.Ceiling(Convert.ToInt32(await cmd.ExecuteScalarAsync()) / (double)tamPagina);
+
+            // Datos paginados
+            cmd.CommandText = @"
+        SELECT 
+            c.Id, c.FechaInicio, c.FechaFin, c.Monto,
+            i.Nombre AS InquilinoNombre, i.Apellido AS InquilinoApellido,
+            im.Direccion AS InmuebleDireccion
+        FROM Contrato c
+        JOIN Inquilino i ON c.InquilinoId = i.Id
+        JOIN Inmueble im ON c.InmuebleId = im.Id
+        WHERE (@filtro IS NULL OR i.Apellido LIKE @filtro OR i.Nombre LIKE @filtro OR im.Direccion LIKE @filtro)
+        ORDER BY c.FechaInicio DESC
+        LIMIT @limit OFFSET @offset;";
+            Add(cmd, "@limit", tamPagina);
+            Add(cmd, "@offset", (pagina - 1) * tamPagina);
+
+            using var rd = await cmd.ExecuteReaderAsync();
+            while (await rd.ReadAsync())
+            {
+                var contrato = new Contrato
+                {
+                    Id = rd.GetInt32("Id"),
+                    FechaInicio = rd.GetDateTime("FechaInicio"),
+                    FechaFin = rd.GetDateTime("FechaFin"),
+                    Monto = rd.GetDecimal("Monto"),
+                    Inquilino = new Inquilino
+                    {
+                        Nombre = rd.GetString("InquilinoNombre"),
+                        Apellido = rd.GetString("InquilinoApellido")
+                    },
+                    Inmueble = new Inmueble
+                    {
+                        Direccion = rd.GetString("InmuebleDireccion")
+                    }
+                };
+                resultado.Items.Add(contrato);
+            }
+
+            return resultado;
+        }
+
+        /* public async Task<Paginador<Contrato>> ObtenerPaginadoAsync(int pagina, int tamPagina)
+         {
+             var resultado = new Paginador<Contrato> { PaginaActual = pagina };
+             using var conn = _db.OpenConnection();
+             using var cmd = (MySqlCommand)conn.CreateCommand();
+
+             // Total de registros
+             cmd.CommandText = "SELECT COUNT(*) FROM Contrato;";
+             resultado.TotalPaginas = (int)Math.Ceiling(Convert.ToInt32(await cmd.ExecuteScalarAsync()) / (double)tamPagina);
+
+             // Datos paginados
+             cmd.CommandText = @"
+         SELECT 
+             c.Id, c.FechaInicio, c.FechaFin, c.Monto, c.InmuebleId, c.InquilinoId,
+             i.Nombre AS InquilinoNombre, i.Apellido AS InquilinoApellido,
+             im.Direccion AS InmuebleDireccion
+         FROM Contrato c
+         JOIN Inquilino i ON c.InquilinoId = i.Id
+         JOIN Inmueble im ON c.InmuebleId = im.Id
+         ORDER BY c.FechaInicio DESC
+         LIMIT @limit OFFSET @offset;";
+             Add(cmd, "@limit", tamPagina);
+             Add(cmd, "@offset", (pagina - 1) * tamPagina);
+
+             using var rd = await cmd.ExecuteReaderAsync();
+             while (await rd.ReadAsync())
+             {
+                 var contrato = new Contrato
+                 {
+                     Id = rd.GetInt32("Id"),
+                     FechaInicio = rd.GetDateTime("FechaInicio"),
+                     FechaFin = rd.GetDateTime("FechaFin"),
+                     Monto = rd.GetDecimal("Monto"),
+                     Inquilino = new Inquilino
+                     {
+                         Nombre = rd.GetString("InquilinoNombre"),
+                         Apellido = rd.GetString("InquilinoApellido")
+                     },
+                     Inmueble = new Inmueble
+                     {
+                         Direccion = rd.GetString("InmuebleDireccion")
+                     }
+                 };
+                 resultado.Items.Add(contrato);
+             }
+
+             return resultado;
+         }*/
 
 
         private static void Add(MySqlCommand cmd, string nombre, object? valor)

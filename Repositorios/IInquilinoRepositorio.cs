@@ -10,6 +10,8 @@ namespace imnobiliatiaNet.Repositorios
         Task<bool> ActualizarAsync(Inquilino i);
         Task<bool> BorrarAsync(int id);
         Task<IList<Inquilino>> ObtenerTodosAsync();
+        Task<Paginador<Inquilino>> ListarPaginadoAsync(string? filtro, int pagina, int tamPagina);
+
 
     }
 }

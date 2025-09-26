@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "Detalle del Contrato";
+    var rol = Context.Session.GetString("UsuarioRol");
+
 }
 
 <div class="container d-flex justify-content-center mt-5">
@@ -39,6 +41,21 @@
                     }
 
                 </dl>
+                @if (rol == "Administrador")
+                {
+                    <hr />
+                    <h5>🕵️ Auditoría</h5>
+                    @if (Model.UsuarioCreador != null)
+                    {
+                        <p><strong>Creado por:</strong> @Model.UsuarioCreador.Nombre (@Model.UsuarioCreador.Rol)</p>
+                    }
+
+                    @if (Model.UsuarioTerminador != null)
+                    {
+                        <p><strong>Terminado por:</strong> @Model.UsuarioTerminador.Nombre (@Model.UsuarioTerminador.Rol)</p>
+                    }
+                }
+
             </div>
         </div>
 

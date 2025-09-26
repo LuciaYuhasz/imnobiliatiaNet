@@ -1,0 +1,67 @@
+@model imnobiliatiaNet.Models.Contrato
+@{
+    ViewData["Title"] = "Renovar Contrato";
+    var original = ViewBag.ContratoOriginal as imnobiliatiaNet.Models.Contrato;
+}
+
+<h2 class="mb-4">🔁 Renovar Contrato</h2>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger text-center fw-semibold">
+        @TempData["Error"]
+    </div>
+}
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <p>@error.ErrorMessage</p>
+        }
+    </div>
+}
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <h5 class="mb-3">📄 Contrato original</h5>
+        <p><strong>ID:</strong> #@original?.Id</p>
+        <p><strong>Inquilino:</strong> @original?.Inquilino?.Apellido @original?.Inquilino?.Nombre</p>
+        <p><strong>Inmueble:</strong> @original?.Inmueble?.Direccion - @original?.Inmueble?.Tipo</p>
+        <p><strong>Vigencia:</strong> @original?.FechaInicio.ToShortDateString() →
+            @original?.FechaFin.ToShortDateString()</p>
+    </div>
+</div>
+
+<form asp-action="Renovar" method="post">
+    <input type="hidden" asp-for="InquilinoId" />
+    <input type="hidden" asp-for="InmuebleId" />
+
+    <div class="mb-3">
+        <label asp-for="FechaInicio" class="form-label">📅 Nueva Fecha de Inicio</label>
+        <input asp-for="FechaInicio" class="form-control" />
+        <span asp-validation-for="FechaInicio" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="FechaFin" class="form-label">📅 Nueva Fecha de Fin</label>
+        <input asp-for="FechaFin" class="form-control" />
+        <span asp-validation-for="FechaFin" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Monto" class="form-label">💰 Monto mensual</label>
+        <input asp-for="Monto" class="form-control" />
+        <span asp-validation-for="Monto" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Confirmar Renovación</button>
+    <a asp-action="Index" class="btn btn-outline-secondary ms-2">Cancelar</a>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -11,5 +11,8 @@ namespace imnobiliatiaNet.Repositorios
         Task<bool> BajaAsync(int id);
         Task<IList<Inmueble>> ObtenerDisponiblesEntreFechasAsync(DateTime inicio, DateTime fin);
 
+        Task<Paginador<Inmueble>> ObtenerPaginadoAsync(string? filtro, bool? disponibles, int pagina, int tamPagina);
+
+
     }
 }

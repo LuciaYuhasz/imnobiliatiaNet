@@ -10,15 +10,22 @@
 }
 
 
+
+
 <h1>Inmuebles</h1>
 
-<p>
-    <a class="btn btn-primary" asp-action="Crear">Nuevo Inmueble</a>
-</p>
+
 <p>
     <a class="btn btn-primary" asp-action="Crear">➕ Nuevo Inmueble</a>
-    <a class="btn btn-outline-info ms-2" asp-action="DisponiblesPorFechas">📅 Ver disponibles por fechas</a>
+
+    <a class="btn btn-info text-white fw-semibold ms-2" asp-action="DisponiblesPorFechas">📅 Ver disponibles por
+        fechas</a>
 </p>
+@{
+    var rol = Context.Session.GetString("UsuarioRol");
+}
+
+
 
 <form method="get" asp-action="Index" class="mb-3">
     <div class="row">
@@ -37,6 +44,7 @@
         </div>
     </div>
 </form>
+<p class="text-muted">Mostrando @Model.Count() inmuebles en esta página.</p>
 
 
 <table class="table table-striped">
@@ -66,15 +74,32 @@
                 <td class="text-end">
                     <a class="btn btn-sm btn-secondary" asp-action="Detalle" asp-route-id="@i.Id">Ver</a>
                     <a class="btn btn-sm btn-warning" asp-action="Editar" asp-route-id="@i.Id">Editar</a>
-                    <form asp-action="Eliminar" asp-route-id="@i.Id" method="post" class="d-inline">
-                        <button type="submit" class="btn btn-sm btn-danger"
-                            onclick="return confirm('¿Seguro que querés eliminar este inmueble?')">
-                            Eliminar
-                        </button>
-                    </form>
+                    @if (rol == "Administrador")
+                    {
+                        <form asp-action="Eliminar" asp-route-id="@i.Id" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-danger"
+                                onclick="return confirm('¿Seguro que querés eliminar este inmueble?')">
+                                Eliminar
+                            </button>
+                        </form>
+                    }
+
 
                 </td>
             </tr>
         }
     </tbody>
 </table>
+<nav class="mt-4">
+    <ul class="pagination justify-content-center">
+        @for (int i = 1; i <= (int)ViewBag.TotalPaginas; i++)
+        {
+            <li class="page-item @(i == (int)ViewBag.Pagina ? "active" : "")">
+                <a class="page-link" asp-action="Index" asp-route-pagina="@i" asp-route-filtro="@ViewBag.Filtro"
+                    asp-route-disponibles="@ViewBag.Disponibles">
+                    @i
+                </a>
+            </li>
+        }
+    </ul>
+</nav>

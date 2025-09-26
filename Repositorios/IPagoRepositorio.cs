@@ -11,5 +11,7 @@ namespace imnobiliatiaNet.Repositorios
 
         // Nuevo método con auditoría
         Task<bool> AnularAsync(int id, int usuarioId, string motivo);
+        Task<Paginador<Pago>> ObtenerPaginadoAsync(int contratoId, int pagina, int tamPagina);
+
     }
 }

@@ -2,19 +2,31 @@ using Microsoft.AspNetCore.Mvc;
 using imnobiliatiaNet.Models;
 
 using imnobiliatiaNet.Repositorios;
+using imnobiliatiaNet.Filters;
+
 
 
 namespace imnobiliatiaNet.Controllers
 {
+    [Autenticado]
     public class PropietariosController : Controller
     {
         private readonly IPropietarioRepositorio _repo;
         public PropietariosController(IPropietarioRepositorio repo) => _repo = repo;
 
-        public async Task<IActionResult> Index(string? q)
+        /* public async Task<IActionResult> Index(string? q)
+         {
+             var lista = await _repo.ListarAsync(q);
+             return View(lista);
+         }*/
+        public async Task<IActionResult> Index(string? q, int pagina = 1, int tamPagina = 10)
         {
-            var lista = await _repo.ListarAsync(q);
-            return View(lista);
+            var lista = await _repo.ListarPaginadoAsync(q, pagina, tamPagina);
+            ViewBag.Pagina = pagina;
+            ViewBag.TamPagina = tamPagina;
+            ViewBag.TotalPaginas = lista.TotalPaginas;
+            ViewBag.Filtro = q;
+            return View(lista.Items);
         }
 
         public IActionResult Crear() => View();
@@ -45,17 +57,15 @@ namespace imnobiliatiaNet.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        /*[HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Borrar(int id)
-        {
-            await _repo.BorrarAsync(id);
-            return RedirectToAction(nameof(Index));
-        }*/
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Borrar(int id)
         {
+            var rol = HttpContext.Session.GetString("UsuarioRol");
+            if (rol != "Administrador")
+                return Unauthorized();
+
             try
             {
                 var borrado = await _repo.BorrarAsync(id);

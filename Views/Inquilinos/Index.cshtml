@@ -9,6 +9,9 @@
         @TempData["Error"]
     </div>
 }
+@{
+    var rol = Context.Session.GetString("UsuarioRol");
+}
 
 
 <h1>Inquilinos</h1>
@@ -46,11 +49,27 @@
                 <td class="text-end">
                     <a class="btn btn-sm btn-secondary" asp-action="Detalle" asp-route-id="@i.Id">Ver</a>
                     <a class="btn btn-sm btn-warning" asp-action="Editar" asp-route-id="@i.Id">Editar</a>
-                    <form asp-action="Eliminar" asp-route-id="@i.Id" method="post" style="display:inline">
-                        <button class="btn btn-sm btn-danger" onclick="return confirm('¿Borrar?')">Borrar</button>
-                    </form>
+                    @if (rol == "Administrador")
+                    {
+                        <form asp-action="Eliminar" asp-route-id="@i.Id" method="post" style="display:inline">
+                            <button class="btn btn-sm btn-danger" onclick="return confirm('¿Borrar?')">Borrar</button>
+                        </form>
+                    }
+
                 </td>
             </tr>
         }
     </tbody>
 </table>
+<nav class="mt-4">
+    <ul class="pagination justify-content-center">
+        @for (int i = 1; i <= (int)ViewBag.TotalPaginas; i++)
+        {
+            <li class="page-item @(i == (int)ViewBag.Pagina ? "active" : "")">
+                <a class="page-link" asp-action="Index" asp-route-pagina="@i" asp-route-filtro="@ViewBag.Filtro">
+                    @i
+                </a>
+            </li>
+        }
+    </ul>
+</nav>

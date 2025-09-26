@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using imnobiliatiaNet.Repositorios;
 using imnobiliatiaNet.Models;
+using imnobiliatiaNet.Filters;
+
 
 namespace imnobiliatiaNet.Controllers
 {
+    [Autenticado]
     public class InmueblesController : Controller
     {
         private readonly IInmuebleRepositorio _repo;
@@ -16,13 +19,16 @@ namespace imnobiliatiaNet.Controllers
             _repo = repo;
             propietarioRepositorio = propietarioRepo;
         }
-
-
-        public async Task<IActionResult> Index(string? filtro, bool? disponibles)
+        public async Task<IActionResult> Index(string? filtro, bool? disponibles, int pagina = 1, int tamPagina = 10)
         {
-            var lista = await _repo.ObtenerTodosAsync(filtro, disponibles);
-            return View(lista);
+            var resultado = await _repo.ObtenerPaginadoAsync(filtro, disponibles, pagina, tamPagina);
+            ViewBag.Filtro = filtro;
+            ViewBag.Disponibles = disponibles;
+            ViewBag.Pagina = pagina;
+            ViewBag.TotalPaginas = resultado.TotalPaginas;
+            return View(resultado.Items);
         }
+
 
 
         // Método GET: muestra el formulario
@@ -84,6 +90,15 @@ namespace imnobiliatiaNet.Controllers
 
         public async Task<IActionResult> Eliminar(int id)
         {
+
+            var rol = HttpContext.Session.GetString("UsuarioRol");
+
+            if (rol != "Administrador")
+            {
+                TempData["Error"] = "No tenés permisos para eliminar inmuebles.";
+                return RedirectToAction(nameof(Index));
+            }
+
             try
             {
                 var eliminado = await _repo.BajaAsync(id);
@@ -103,6 +118,7 @@ namespace imnobiliatiaNet.Controllers
                 return RedirectToAction(nameof(Index));
             }
         }
+
         public async Task<IActionResult> DisponiblesPorFechas(DateTime? inicio, DateTime? fin)
         {
             if (!inicio.HasValue || !fin.HasValue || inicio > fin)

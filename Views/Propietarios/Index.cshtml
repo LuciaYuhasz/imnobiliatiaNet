@@ -9,6 +9,10 @@
         @TempData["Error"]
     </div>
 }
+@{
+    var rol = Context.Session.GetString("UsuarioRol");
+}
+
 
 <h1 class="mb-4">Propietarios</h1>
 
@@ -56,14 +60,32 @@
                     <a class="btn btn-sm btn-outline-warning me-1" asp-action="Editar" asp-route-id="@p.Id">
                         <i class="bi bi-pencil"></i> Editar
                     </a>
-                    <form asp-action="Borrar" asp-route-id="@p.Id" method="post" class="d-inline">
-                        <button type="submit" class="btn btn-sm btn-outline-danger"
-                            onclick="return confirm('¿Seguro que querés borrar este propietario?')">
-                            <i class="bi bi-trash"></i> Borrar
-                        </button>
-                    </form>
+
+
+                    @if (rol == "Administrador")
+                    {
+                        <form asp-action="Borrar" asp-route-id="@p.Id" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-outline-danger"
+                                onclick="return confirm('¿Seguro que querés borrar este propietario?')">
+                                <i class="bi bi-trash"></i> Borrar
+                            </button>
+                        </form>
+                    }
+
                 </td>
             </tr>
         }
     </tbody>
 </table>
+<nav class="mt-4">
+    <ul class="pagination justify-content-center">
+        @for (int i = 1; i <= (int)ViewBag.TotalPaginas; i++)
+        {
+            <li class="page-item @(i == (int)ViewBag.Pagina ? "active" : "")">
+                <a class="page-link" asp-action="Index" asp-route-pagina="@i" asp-route-q="@ViewBag.Filtro">
+                    @i
+                </a>
+            </li>
+        }
+    </ul>
+</nav>

@@ -86,6 +86,54 @@ namespace imnobiliatiaNet.Repositorios
 
             return await cmd.ExecuteNonQueryAsync() > 0;
         }
+        public async Task<Paginador<Pago>> ObtenerPaginadoAsync(int contratoId, int pagina, int tamPagina)
+        {
+            var resultado = new Paginador<Pago> { PaginaActual = pagina };
+            using var conn = _db.OpenConnection();
+            using var cmd = (MySqlCommand)conn.CreateCommand();
+
+            // Total de registros
+            cmd.CommandText = @"
+        SELECT COUNT(*) FROM Pago
+        WHERE ContratoId = @contratoId;";
+            Add(cmd, "@contratoId", contratoId);
+            resultado.TotalPaginas = (int)Math.Ceiling(Convert.ToInt32(await cmd.ExecuteScalarAsync()) / (double)tamPagina);
+
+            // Datos paginados
+            cmd.CommandText = @"
+        SELECT p.*, u.Nombre AS UsuarioAltaNombre
+        FROM Pago p
+        LEFT JOIN Usuario u ON p.UsuarioAltaId = u.Id
+        WHERE p.ContratoId = @contratoId
+        ORDER BY p.FechaPago DESC
+        LIMIT @limit OFFSET @offset;";
+            Add(cmd, "@limit", tamPagina);
+            Add(cmd, "@offset", (pagina - 1) * tamPagina);
+
+            using var rd = await cmd.ExecuteReaderAsync();
+            while (await rd.ReadAsync())
+            {
+                var pago = new Pago
+                {
+                    Id = rd.GetInt32("Id"),
+                    ContratoId = rd.GetInt32("ContratoId"),
+                    NumeroPago = rd.GetInt32("NumeroPago"),
+                    FechaPago = rd.GetDateTime("FechaPago"),
+                    Concepto = rd.GetString("Concepto"),
+                    Importe = rd.GetDecimal("Importe"),
+                    Anulado = rd.GetBoolean("Anulado"),
+                    UsuarioAltaId = rd.GetInt32("UsuarioAltaId"),
+                    UsuarioAlta = new Usuario
+                    {
+                        Id = rd.GetInt32("UsuarioAltaId"),
+                        Nombre = rd.GetString("UsuarioAltaNombre")
+                    }
+                };
+                resultado.Items.Add(pago);
+            }
+
+            return resultado;
+        }
 
 
         private static void Add(MySqlCommand cmd, string nombre, object? valor)

@@ -120,6 +120,45 @@ namespace imnobiliatiaNet.Repositorios
             Add(cmd, "@id", id);
             return await cmd.ExecuteNonQueryAsync() > 0;
         }
+        public async Task<Paginador<Inmueble>> ObtenerPaginadoAsync(string? filtro, bool? disponibles, int pagina, int tamPagina)
+        {
+            var resultado = new Paginador<Inmueble> { PaginaActual = pagina };
+            using var conn = _db.OpenConnection();
+            using var cmd = (MySqlCommand)conn.CreateCommand();
+
+            // Total de registros
+            cmd.CommandText = @"
+        SELECT COUNT(*) FROM Inmueble
+        WHERE (@filtro IS NULL OR Direccion LIKE @filtro OR Tipo LIKE @filtro)
+        AND (@disponibles IS NULL OR Disponible = @disponibles);";
+            cmd.Parameters.AddWithValue("@filtro", filtro != null ? $"%{filtro}%" : DBNull.Value);
+            cmd.Parameters.AddWithValue("@disponibles", disponibles.HasValue ? disponibles.Value : DBNull.Value);
+            resultado.TotalPaginas = (int)Math.Ceiling(Convert.ToInt32(await cmd.ExecuteScalarAsync()) / (double)tamPagina);
+
+            // Datos paginados
+            // Datos paginados
+            cmd.CommandText = @"
+    SELECT i.*, p.Apellido, p.Nombre
+    FROM Inmueble i
+    JOIN Propietario p ON i.PropietarioId = p.Id
+    WHERE (@filtro IS NULL OR i.Direccion LIKE @filtro OR i.Tipo LIKE @filtro)
+    AND (@disponibles IS NULL OR i.Disponible = @disponibles)
+    ORDER BY i.Direccion
+    LIMIT @limit OFFSET @offset;";
+
+
+            cmd.Parameters.AddWithValue("@limit", tamPagina);
+            cmd.Parameters.AddWithValue("@offset", (pagina - 1) * tamPagina);
+
+
+            using var rd = await cmd.ExecuteReaderAsync();
+            while (await rd.ReadAsync())
+                resultado.Items.Add(Map(rd));
+
+            return resultado;
+        }
+
+
 
         private static void Add(IDbCommand cmd, string nombre, object? valor)
         {

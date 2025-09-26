@@ -1,9 +1,11 @@
 using imnobiliatiaNet.Models;
 using imnobiliatiaNet.Repositorios;
 using Microsoft.AspNetCore.Mvc;
+using imnobiliatiaNet.Filters;
 
 namespace imnobiliatiaNet.Controllers
 {
+    [Autenticado]
     public class PagosController : Controller
     {
         private readonly IPagoRepositorio _pagoRepo;
@@ -18,7 +20,7 @@ namespace imnobiliatiaNet.Controllers
         }
 
         // Listar pagos de un contrato
-        public async Task<IActionResult> Index(int contratoId)
+        /*public async Task<IActionResult> Index(int contratoId)
         {
             var contrato = await _contratoRepo.ObtenerPorIdAsync(contratoId);
             if (contrato == null) return NotFound();
@@ -26,7 +28,22 @@ namespace imnobiliatiaNet.Controllers
             ViewBag.Contrato = contrato;
             var pagos = await _pagoRepo.ObtenerPorContratoAsync(contratoId);
             return View(pagos);
+        }*/
+        public async Task<IActionResult> Index(int contratoId, int pagina = 1, int tamPagina = 10)
+        {
+            var contrato = await _contratoRepo.ObtenerPorIdAsync(contratoId);
+            if (contrato == null) return NotFound();
+            ViewBag.Contrato = contrato;
+
+            var resultado = await _pagoRepo.ObtenerPaginadoAsync(contratoId, pagina, tamPagina);
+            ViewBag.Pagina = pagina;
+            ViewBag.TotalPaginas = resultado.TotalPaginas;
+            ViewBag.ContratoId = contratoId;
+
+            return View(resultado.Items);
         }
+
+
 
         // GET: Crear pago
         public IActionResult Create(int contratoId)
@@ -42,7 +59,11 @@ namespace imnobiliatiaNet.Controllers
         {
             if (ModelState.IsValid)
             {
-                pago.UsuarioAltaId = HttpContext.Session.GetInt32("UsuarioId") ?? 1;
+                //pago.UsuarioAltaId = HttpContext.Session.GetInt32("UsuarioId") ?? 1;
+                var usuarioId = HttpContext.Session.GetInt32("UsuarioId");
+                if (usuarioId == null) return RedirectToAction("Login", "Auth");
+                pago.UsuarioAltaId = usuarioId.Value;
+
 
 
                 await _pagoRepo.CrearAsync(pago);
@@ -80,24 +101,58 @@ namespace imnobiliatiaNet.Controllers
             if (pago == null) return NotFound();
             return View(pago);
         }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Anular(int id, string motivo)
         {
+            var usuarioId = HttpContext.Session.GetInt32("UsuarioId");
+            if (usuarioId == null) return RedirectToAction("Login", "Auth");
+
             var pago = await _pagoRepo.ObtenerPorIdAsync(id);
             if (pago == null) return NotFound();
 
-            var claim = User.FindFirst("Id");
-            int usuarioId = claim != null && int.TryParse(claim.Value, out var idUsuario) ? idUsuario : 1;
-
-            await _pagoRepo.AnularAsync(id, usuarioId, motivo);
+            await _pagoRepo.AnularAsync(id, usuarioId.Value, motivo);
             return RedirectToAction(nameof(Index), new { contratoId = pago.ContratoId });
         }
+
+        /* [HttpPost]
+         [ValidateAntiForgeryToken]
+         public async Task<IActionResult> Anular(int id, string motivo)
+         {
+             var pago = await _pagoRepo.ObtenerPorIdAsync(id);
+             if (pago == null) return NotFound();
+
+             var claim = User.FindFirst("Id");
+             int usuarioId = claim != null && int.TryParse(claim.Value, out var idUsuario) ? idUsuario : 1;
+
+             await _pagoRepo.AnularAsync(id, usuarioId, motivo);
+             return RedirectToAction(nameof(Index), new { contratoId = pago.ContratoId });
+         }*/
+        /* public async Task<IActionResult> Details(int id)
+         {
+             var pago = await _pagoRepo.ObtenerPorIdAsync(id);
+             if (pago == null) return NotFound();
+
+             // Cargar datos del usuario creador
+             if (pago.UsuarioAltaId.HasValue)
+                 pago.UsuarioAlta = await _usuarioRepo.ObtenerPorIdAsync(pago.UsuarioAltaId.Value);
+
+             // Cargar datos del usuario anulador
+             if (pago.UsuarioAnulacionId.HasValue)
+                 pago.UsuarioAnulacion = await _usuarioRepo.ObtenerPorIdAsync(pago.UsuarioAnulacionId.Value);
+
+             return View(pago);
+         }*/
         public async Task<IActionResult> Details(int id)
         {
+            var usuarioId = HttpContext.Session.GetInt32("UsuarioId");
+            if (usuarioId == null) return RedirectToAction("Login", "Auth");
+
             var pago = await _pagoRepo.ObtenerPorIdAsync(id);
             if (pago == null) return NotFound();
+
+            // Cargar datos del contrato completo
+            pago.Contrato = await _contratoRepo.ObtenerPorIdAsync(pago.ContratoId);
 
             // Cargar datos del usuario creador
             if (pago.UsuarioAltaId.HasValue)
@@ -109,6 +164,8 @@ namespace imnobiliatiaNet.Controllers
 
             return View(pago);
         }
+
+
 
 
 

@@ -3,9 +3,11 @@ using imnobiliatiaNet.Models;
 using imnobiliatiaNet.Repositorios;
 
 using Microsoft.AspNetCore.Mvc;
+using imnobiliatiaNet.Filters;
 
 namespace inmobiliatiaNet.Controllers
 {
+    [Autenticado]
     public class InquilinosController : Controller
     {
         private readonly IInquilinoRepositorio _repo;
@@ -16,12 +18,15 @@ namespace inmobiliatiaNet.Controllers
         }
 
         // GET: /Inquilinos
-        public async Task<IActionResult> Index(string? filtro)
+        public async Task<IActionResult> Index(string? filtro, int pagina = 1, int tamPagina = 10)
         {
-            Console.WriteLine($"Filtro recibido: {filtro}");
-            var lista = await _repo.ListarAsync(filtro);
-            return View(lista);
+            var resultado = await _repo.ListarPaginadoAsync(filtro, pagina, tamPagina);
+            ViewBag.Filtro = filtro;
+            ViewBag.Pagina = pagina;
+            ViewBag.TotalPaginas = resultado.TotalPaginas;
+            return View(resultado.Items);
         }
+
 
         // GET: /Inquilinos/Crear
         public IActionResult Crear()
@@ -81,6 +86,10 @@ namespace inmobiliatiaNet.Controllers
         [HttpPost, ActionName("Eliminar")]
         public async Task<IActionResult> EliminarConfirmado(int id)
         {
+            var rol = HttpContext.Session.GetString("UsuarioRol");
+            if (rol != "Administrador")
+                return Unauthorized();
+
             try
             {
                 var borrado = await _repo.BorrarAsync(id);

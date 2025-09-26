@@ -92,6 +92,36 @@ namespace imnobiliatiaNet.Repositorios
             Add(cmd, "@id", id);
             return await cmd.ExecuteNonQueryAsync() > 0;
         }
+        public async Task<Paginador<Inquilino>> ListarPaginadoAsync(string? filtro, int pagina, int tamPagina)
+        {
+            var resultado = new Paginador<Inquilino> { PaginaActual = pagina };
+            using var conn = _db.OpenConnection();
+            using var cmd = (MySqlCommand)conn.CreateCommand();
+
+            // Total de registros
+            cmd.CommandText = @"
+        SELECT COUNT(*) FROM Inquilino
+        WHERE (@filtro IS NULL OR Apellido LIKE @filtro OR Nombre LIKE @filtro OR DNI LIKE @filtro);";
+            Add(cmd, "@filtro", filtro != null ? $"%{filtro}%" : DBNull.Value);
+            resultado.TotalPaginas = (int)Math.Ceiling(Convert.ToInt32(await cmd.ExecuteScalarAsync()) / (double)tamPagina);
+
+            // Datos paginados
+            cmd.CommandText = @"
+        SELECT * FROM Inquilino
+        WHERE (@filtro IS NULL OR Apellido LIKE @filtro OR Nombre LIKE @filtro OR DNI LIKE @filtro)
+        ORDER BY Apellido, Nombre
+        LIMIT @limit OFFSET @offset;";
+            cmd.Parameters.Clear();
+            Add(cmd, "@filtro", filtro != null ? $"%{filtro}%" : DBNull.Value);
+            Add(cmd, "@limit", tamPagina);
+            Add(cmd, "@offset", (pagina - 1) * tamPagina);
+
+            using var rd = await cmd.ExecuteReaderAsync();
+            while (await rd.ReadAsync())
+                resultado.Items.Add(Map(rd));
+
+            return resultado;
+        }
 
         private static void Add(MySqlCommand cmd, string nombre, object? valor)
         {

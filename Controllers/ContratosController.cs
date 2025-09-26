@@ -3,38 +3,58 @@ using imnobiliatiaNet.Repositorios;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MySqlConnector;
+using imnobiliatiaNet.Filters;
+
 
 namespace imnobiliatiaNet.Controllers
 {
+    [Autenticado]
     public class ContratosController : Controller
     {
         private readonly IContratoRepositorio _contratoRepo;
         private readonly IInmuebleRepositorio _inmuebleRepo;
         private readonly IInquilinoRepositorio _inquilinoRepo;
+        private readonly IUsuarioRepositorio _usuarioRepo;
 
-        public ContratosController(IContratoRepositorio contratoRepo, IInmuebleRepositorio inmuebleRepo, IInquilinoRepositorio inquilinoRepo)
+
+        public ContratosController(IContratoRepositorio contratoRepo, IInmuebleRepositorio inmuebleRepo, IInquilinoRepositorio inquilinoRepo, IUsuarioRepositorio usuarioRepo)
         {
             _contratoRepo = contratoRepo;
             _inmuebleRepo = inmuebleRepo;
             _inquilinoRepo = inquilinoRepo;
+            _usuarioRepo = usuarioRepo;
         }
 
         // GET: Contratos
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? filtro, int pagina = 1, int tamPagina = 10)
         {
-            var lista = await _contratoRepo.ObtenerTodosAsync();
-            return View(lista);
+            var resultado = await _contratoRepo.ObtenerPaginadoAsync(filtro, pagina, tamPagina);
+            ViewBag.Filtro = filtro;
+            ViewBag.Pagina = pagina;
+            ViewBag.TotalPaginas = resultado.TotalPaginas;
+            return View(resultado.Items);
         }
 
         // GET: Contratos/Details/5
+
         public async Task<IActionResult> Details(int id)
         {
             var contrato = await _contratoRepo.ObtenerPorIdAsync(id);
             if (contrato == null)
                 return NotFound();
 
+            // Cargar auditoría
+            if (contrato.UsuarioCreadorId > 0)
+                contrato.UsuarioCreador = await _usuarioRepo.ObtenerPorIdAsync(contrato.UsuarioCreadorId);
+            if (contrato.UsuarioTerminadorId.HasValue)
+                contrato.UsuarioTerminador = await _usuarioRepo.ObtenerPorIdAsync(contrato.UsuarioTerminadorId.Value);
+
+
+
+
             return View(contrato);
         }
+
 
         // GET: Contratos/Create
         public async Task<IActionResult> Create()
@@ -171,5 +191,53 @@ namespace imnobiliatiaNet.Controllers
                 Text = $"{i.Apellido}, {i.Nombre}"
             }).ToList();
         }
+        [HttpGet]
+        [HttpGet]
+        public async Task<IActionResult> Renovar(int id)
+        {
+            var contrato = await _contratoRepo.ObtenerPorIdAsync(id);
+            if (contrato == null)
+                return NotFound();
+
+            // Validar que el contrato ya haya finalizado
+            if (contrato.FechaFin >= DateTime.Today)
+            {
+                TempData["Error"] = "El contrato aún está vigente. No se puede renovar.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var nuevoContrato = new Contrato
+            {
+                InquilinoId = contrato.InquilinoId,
+                InmuebleId = contrato.InmuebleId,
+                FechaInicio = contrato.FechaFin.AddDays(1),
+                FechaFin = contrato.FechaFin.AddYears(1),
+                Monto = contrato.Monto
+            };
+
+            ViewBag.ContratoOriginal = contrato;
+            return View(nuevoContrato);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Renovar(Contrato c)
+        {
+            if (!ModelState.IsValid) return View(c);
+
+            var haySuperposicion = await _contratoRepo.ExisteSuperposicionAsync(c.InmuebleId, c.FechaInicio, c.FechaFin);
+            if (haySuperposicion)
+            {
+                ModelState.AddModelError("", "Ya existe un contrato activo para ese inmueble en ese rango de fechas.");
+                return View(c);
+            }
+
+            int usuarioId = HttpContext.Session.GetInt32("UsuarioId") ?? 1;
+            c.UsuarioCreadorId = usuarioId;
+
+            var id = await _contratoRepo.AltaAsync(c);
+            return RedirectToAction("Editar", new { id });
+        }
+
     }
 }
