@@ -63,7 +63,7 @@ namespace imnobiliatiaNet.Controllers
 
 
         // GET: Register
-        //public IActionResult Register() => View();
+
         public IActionResult Register()
         {
             var rol = HttpContext.Session.GetString("UsuarioRol");
@@ -140,27 +140,10 @@ namespace imnobiliatiaNet.Controllers
 
             await _usuarioRepo.ActualizarAsync(usuario);
             TempData["Success"] = "Perfil actualizado correctamente.";
-            return RedirectToAction("Perfil");
+            //            return RedirectToAction("Perfil");
+            return RedirectToAction(nameof(Perfil));
+
         }
-
-        /* [HttpPost]
-         [ValidateAntiForgeryToken]
-         public async Task<IActionResult> Perfil(string nombre, string clave, string avatarUrl)
-         {
-             var usuarioId = HttpContext.Session.GetInt32("UsuarioId");
-             if (usuarioId == null) return RedirectToAction("Login");
-
-             var usuario = await _usuarioRepo.ObtenerPorIdAsync(usuarioId.Value);
-             usuario.Nombre = nombre;
-             if (!string.IsNullOrEmpty(clave))
-                 usuario.ClaveHash = BCrypt.Net.BCrypt.HashPassword(clave);
-             usuario.AvatarUrl = avatarUrl;
-
-             await _usuarioRepo.ActualizarAsync(usuario);
-             TempData["Success"] = "Perfil actualizado correctamente.";
-             return RedirectToAction("Perfil");
-         }
- */
 
 
         [HttpPost]

@@ -11,9 +11,6 @@ namespace imnobiliatiaNet.Repositorios
         public PropietarioRepositorio(Db db) => _db = db;
 
 
-
-
-
         public async Task<int> CrearAsync(Propietario p)
         {
             using var conn = _db.OpenConnection();
@@ -33,6 +30,7 @@ namespace imnobiliatiaNet.Repositorios
         }
 
 
+        // Devuelve un propietario por ID, usado en edición o detalle
         public async Task<Propietario?> ObtenerPorIdAsync(int id)
         {
             using var conn = _db.OpenConnection();
@@ -45,6 +43,7 @@ namespace imnobiliatiaNet.Repositorios
             return Map(rd);
         }
 
+        // Devuelve todos los propietarios, útil para combos o filtros sin paginación
         public async Task<IList<Propietario>> ListarAsync(string? filtro = null)
         {
             using var conn = _db.OpenConnection();
@@ -113,6 +112,8 @@ namespace imnobiliatiaNet.Repositorios
             Add(cmd, "@id", id);
             return await cmd.ExecuteNonQueryAsync() > 0;
         }
+
+        // Devuelve propietarios paginados
         public async Task<Paginador<Propietario>> ListarPaginadoAsync(string? filtro, int pagina, int tamPagina)
         {
             var resultado = new Paginador<Propietario> { PaginaActual = pagina };

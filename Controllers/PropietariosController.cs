@@ -14,11 +14,7 @@ namespace imnobiliatiaNet.Controllers
         private readonly IPropietarioRepositorio _repo;
         public PropietariosController(IPropietarioRepositorio repo) => _repo = repo;
 
-        /* public async Task<IActionResult> Index(string? q)
-         {
-             var lista = await _repo.ListarAsync(q);
-             return View(lista);
-         }*/
+
         public async Task<IActionResult> Index(string? q, int pagina = 1, int tamPagina = 10)
         {
             var lista = await _repo.ListarPaginadoAsync(q, pagina, tamPagina);

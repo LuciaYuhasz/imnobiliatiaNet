@@ -20,15 +20,7 @@ namespace imnobiliatiaNet.Controllers
         }
 
         // Listar pagos de un contrato
-        /*public async Task<IActionResult> Index(int contratoId)
-        {
-            var contrato = await _contratoRepo.ObtenerPorIdAsync(contratoId);
-            if (contrato == null) return NotFound();
 
-            ViewBag.Contrato = contrato;
-            var pagos = await _pagoRepo.ObtenerPorContratoAsync(contratoId);
-            return View(pagos);
-        }*/
         public async Task<IActionResult> Index(int contratoId, int pagina = 1, int tamPagina = 10)
         {
             var contrato = await _contratoRepo.ObtenerPorIdAsync(contratoId);
@@ -115,34 +107,7 @@ namespace imnobiliatiaNet.Controllers
             return RedirectToAction(nameof(Index), new { contratoId = pago.ContratoId });
         }
 
-        /* [HttpPost]
-         [ValidateAntiForgeryToken]
-         public async Task<IActionResult> Anular(int id, string motivo)
-         {
-             var pago = await _pagoRepo.ObtenerPorIdAsync(id);
-             if (pago == null) return NotFound();
 
-             var claim = User.FindFirst("Id");
-             int usuarioId = claim != null && int.TryParse(claim.Value, out var idUsuario) ? idUsuario : 1;
-
-             await _pagoRepo.AnularAsync(id, usuarioId, motivo);
-             return RedirectToAction(nameof(Index), new { contratoId = pago.ContratoId });
-         }*/
-        /* public async Task<IActionResult> Details(int id)
-         {
-             var pago = await _pagoRepo.ObtenerPorIdAsync(id);
-             if (pago == null) return NotFound();
-
-             // Cargar datos del usuario creador
-             if (pago.UsuarioAltaId.HasValue)
-                 pago.UsuarioAlta = await _usuarioRepo.ObtenerPorIdAsync(pago.UsuarioAltaId.Value);
-
-             // Cargar datos del usuario anulador
-             if (pago.UsuarioAnulacionId.HasValue)
-                 pago.UsuarioAnulacion = await _usuarioRepo.ObtenerPorIdAsync(pago.UsuarioAnulacionId.Value);
-
-             return View(pago);
-         }*/
         public async Task<IActionResult> Details(int id)
         {
             var usuarioId = HttpContext.Session.GetInt32("UsuarioId");

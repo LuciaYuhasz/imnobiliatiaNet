@@ -192,7 +192,7 @@ namespace imnobiliatiaNet.Controllers
             }).ToList();
         }
         [HttpGet]
-        [HttpGet]
+
         public async Task<IActionResult> Renovar(int id)
         {
             var contrato = await _contratoRepo.ObtenerPorIdAsync(id);
