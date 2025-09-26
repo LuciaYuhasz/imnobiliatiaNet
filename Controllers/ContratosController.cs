@@ -236,7 +236,9 @@ namespace imnobiliatiaNet.Controllers
             c.UsuarioCreadorId = usuarioId;
 
             var id = await _contratoRepo.AltaAsync(c);
-            return RedirectToAction("Editar", new { id });
+            //return RedirectToAction("Editar", new { id });
+            return RedirectToAction("Index");
+
         }
 
     }
